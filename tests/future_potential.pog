@@ -1,0 +1,26 @@
+using braces
+using namespaces
+
+namespace mynamespace {
+	class myclass {
+
+		func print(self, *values) {
+			Console.pogl(*values)
+			try {
+					invalid syntax
+			} except(e) {
+				return e
+					}
+			}
+
+		}
+
+}
+
+func myfunction(param) {
+	if param {
+	func print_this() {
+		Console.pogl("this")
+	}
+	}
+}

@@ -1,0 +1,34 @@
+using namespaces
+using semicolons
+using mainmethods
+using braces
+
+import random;
+
+def main(int argc, char[] argv) { 
+	let var = null; "For now";
+	let one = null;
+	let two = null;
+	let three = null;
+	Console.pogl("One: ", var+one);
+	Console.pogl("Two: ", var+two);
+	Console.pogl("Three: ", var+three);
+	return myfunc(one, two, three);
+
+}
+
+def myfunc(four, five, six) {
+	Console.pogl("Four, five and six: ", four + five + six);
+	return 0;
+}
+
+
+let string = "onetwothree" + "hi";
+let string1 = "asd";
+char mychar = 21;
+
+Console.pogl(string1);
+t.sleep(1);
+Console.pogl(mychar);
+t.sleep(1);
+Console.animate(string);

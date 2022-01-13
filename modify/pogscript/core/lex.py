@@ -1,0 +1,2 @@
+class ModifiedLexer():
+    pass

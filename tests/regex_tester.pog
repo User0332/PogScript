@@ -1,0 +1,21 @@
+$include <io>
+using braces
+using namespaces
+
+
+let mystr = "string one right here"
+
+namespace hello_world {
+
+def hi() {
+	
+	Console.pog("Hello World!" + "\nGoodbye!\n")
+
+}
+
+}
+
+hello_world.hi()
+
+Console.pogl(9-2*3)
+Console.pogl(mystr)

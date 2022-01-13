@@ -1,0 +1,9 @@
+{"include": "include.py", "module" : "module.py", "py" : "topython.py", "exe" : "exe.py"}
+C:\Users\carlf\PogScript\modifiers\
+C:\Users\carlf\PogScript\imports\
+
+#File modifiers on line 1
+#File modifier path on line 2
+#Import path on line 3
+
+
