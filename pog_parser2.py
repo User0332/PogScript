@@ -1,4 +1,4 @@
-from utils import Token, format_error as format
+from utils import Token, throw
 from keyword import iskeyword
 from traceback import print_stack
 import imports.pogscript_builtins
@@ -58,19 +58,19 @@ class Parser:
 		self.identities.append(name.value)
 
 		if name.type == "NEWLINE":
-			print(format(f"Invalid Syntax: keyword '{var_type.value}' cannot be left by itself. Perhaps you meant to say '{var_type.value} variable = value'?"))
+			throw(f"Invalid Syntax: keyword '{var_type.value}' cannot be left by itself. Perhaps you meant to say '{var_type.value} variable = value'?")
 			exit(1)
 
 		if name.type != "IDENTIFIER":
-			print(format(f"Invalid Syntax: Bad variable name - {name.value} is an invalid variable name."))
+			throw(f"Invalid Syntax: Bad variable name - {name.value} is an invalid variable name.")
 			exit(1)
 
 		if assignment.type != "ASSIGNMENT":
-			print(format(f"Invalid Syntax: '{var_type.value} {name.value} {assignment.value}'\nMust include an assignment operator."))
+			throw(f"Invalid Syntax: '{var_type.value} {name.value} {assignment.value}'\nMust include an assignment operator.")
 			exit(1)
 
 		if iskeyword(name.value):
-			print(format(f"Invalid Syntax: '{name.value}' is a python keyword and is currently an unavaliable variable name."))
+			throw(f"Invalid Syntax: '{name.value}' is a python keyword and is currently an unavaliable variable name.")
 			exit(1)
 
 		if var_type.type == "VAR":
@@ -80,10 +80,10 @@ class Parser:
 					checked-=1
 					break
 				if token.is_even and token.type not in ("STRING", "INTEGER", "IDENTIFIER"):
-					print(format(f"Invalid Syntax: cannot assign '{name.value}' to '{token.value}'"))
+					throw(f"Invalid Syntax: cannot assign '{name.value}' to '{token.value}'")
 					exit(1)
 				if token.is_odd and token.type != "OPERATOR":
-					print(format("Invalid Syntax: Must have an operator between variable values in a variable declaration."))
+					throw("Invalid Syntax: Must have an operator between variable values in a variable declaration.")
 					exit(1)
 
 				values += token.value
@@ -115,10 +115,10 @@ class Parser:
 		self.identities.append(name.value)
 
 		if name.type != "IDENTIFIER":
-			print(format(f"Invalid Syntax: Bad function name. '{name.value}' is an invalid function name."))
+			throw(f"Invalid Syntax: Bad function name. '{name.value}' is an invalid function name.")
 			exit(1)
 		if open_p.value != "(":
-			print(format("Invalid Syntax: Must have opening parenthesis next to function name."))
+			throw("Invalid Syntax: Must have opening parenthesis next to function name.")
 			exit(1)
 
 		for i, token in enumerate(stream[3:]):
@@ -130,12 +130,12 @@ class Parser:
 				break
 			if token.is_even:
 				if token.type != "IDENTIFIER":
-					print(format("Invalid Syntax: parameters must be identifiers."))
+					throw("Invalid Syntax: parameters must be identifiers.")
 					exit(1)
 				else:
 					params.append(token.value)
 			if token.is_odd and token.value != ",":
-				print(format("Invalid Syntax: Must have a comma between parenthesis in a function declaration."))
+				throw("Invalid Syntax: Must have a comma between parenthesis in a function declaration.")
 				exit(1)
 
 
@@ -144,11 +144,11 @@ class Parser:
 
 		if self.braces:
 			if open_scope.value != "{":
-				print(format("Invalid Syntax: Function must open a new scope"))
+				throw("Invalid Syntax: Function must open a new scope")
 				exit(1)
 		else:
 			if open_scope.value != ":":
-				print(format("Invalid Syntax: Function must open a new scope"))
+				throw("Invalid Syntax: Function must open a new scope")
 				exit(1)
 
 		self.exec_string += "def " + name.value + "(" + ",".join(params) + ") " + ":\n"
@@ -172,5 +172,5 @@ class Parser:
 		if identity.value in self.identities:
 			self.exec_string+=identity.value
 		else:
-			print(format(f"Name Error: Unknown reference to '{identity.value}'"))
+			throw(f"Name Error: Unknown reference to '{identity.value}'")
 			exit(1)

@@ -1,1 +1,9 @@
-9+*123/384-38+93
+using braces
+
+def func() {
+	0-2*29+9/8
+}
+
+let myint = 923
+let mystr = "Hello World!"
+9+2*123/384-38+93

@@ -1,5 +1,5 @@
 import re
-from utils import format_error as format
+from utils import throw
 from sys import exit
 
 class Lexer():
@@ -41,13 +41,13 @@ class Lexer():
 			if custom in customizable.keys():
 				customizable[custom] = True
 			else:
-				print(format(f"Syntax customization '{custom}' was not found."))
+				throw(f"Name Error: Syntax customization '{custom}' was not found.")
 				exit(1)
 
 		error_semicolons = re.finditer(";", working_code)
 		for semi in error_semicolons:
 			if not customizable["semicolons"]:
-				print(format("Invalid Syntax: Unknown token ';'"))
+				throw("Invalid Syntax: Unknown token ';'")
 				exit(1)
 
 		assignments = re.finditer("=", working_code)
@@ -128,16 +128,6 @@ class Lexer():
 				tokens.append(["CLASS", "class", _class.start()])
 				working_code = working_code.replace("class", "    ")
 
-		chars = re.finditer("(^|;| |	)char['\n ]", working_code, re.MULTILINE)
-		for char in chars:
-			tokens.append(["CHAR", "char", char.start()])
-			working_code = working_code.replace("char", "    ", 1)
-
-		strings = re.finditer("(^|;| |	)string['\n ]", working_code, re.MULTILINE)
-		for string in strings:
-			tokens.append(["STRING_VAR", "string", string.start()])
-			working_code = working_code.replace("string", "      ", 1)
-
 		vars = re.finditer("(^|;| |	)let['\n ]", working_code, re.MULTILINE)
 		for var in vars:
 			tokens.append(["VAR", "let", var.start()])
@@ -147,9 +137,9 @@ class Lexer():
 		identifiers = re.finditer("[a-zA-Z_0-9]+", working_code)
 		for identifier in identifiers:
 			try:
-				int(identifier.group)
+				int(identifier.group())
 				continue
-			except TypeError:
+			except ValueError:
 				pass
 			tokens.append(["IDENTIFIER", identifier.group(), identifier.start()])
 			working_code = working_code.replace(identifier.group(), " "*len(identifier.group()), 1)
@@ -160,6 +150,7 @@ class Lexer():
 			working_code = working_code.replace(integer.group(), " "*len(integer.group()), 1)
 			
 
+		tokens.append(["EOF", "reached end of file"])
 		return Token(tokens), customizable["braces"], customizable["mainmethods"]
 
 class Token():

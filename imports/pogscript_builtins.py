@@ -2,9 +2,7 @@ import os
 import datetime
 import sys
 import time as t
-import numpy as np
 sys.path.append("E:\\Users\\carlf\\PogScript\\")
-from utils import format_error as format
 from sys import exit
 
 class StringBuilder:
