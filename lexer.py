@@ -1,6 +1,7 @@
 import re
-from utils import throw
+from utils import throw, Token as _Token
 from sys import exit
+from pprint import pprint
 
 class Lexer():
 	def __init__(self, source_code):
@@ -55,26 +56,6 @@ class Lexer():
 			tokens.append(["ASSIGNMENT", "=", assignment.start()])
 			working_code = working_code.replace("=", " ", 1)
 
-		intarrs = re.finditer("(^|;| |	)int\[[0-9]+\]['\n ]", working_code, re.MULTILINE)
-		for intarr in intarrs:
-			tokens.append(["INT_ARR", intarr.group(), intarr.start()])
-			working_code = working_code.replace(intarr.group() , " "*len(intarr.group()), 1)
-
-		boolarrs = re.finditer("(^|;| |	)bool\[[0-9]+\]['\n ]", working_code, re.MULTILINE)
-		for boolarr in boolarrs:
-			tokens.append(["BOOL_ARR", boolarr.group(), boolarr.start()])
-			working_code = working_code.replace(boolarr.group() , " "*len(boolarr.group()), 1)
-
-		strarrs = re.finditer("(r^|;| |	)str\[[0-9]+\]['\n ]", working_code, re.MULTILINE)
-		for starr in strarrs:
-			tokens.append(["STR_ARR", strarr.group(), strarr.start()])
-			working_code = working_code.replace(strarr.group() , " "*len(strarr.group()), 1)
-
-		floatarrs = re.finditer("(^|;| |	)float\[[0-9]+\]['\n ]", working_code, re.MULTILINE)
-		for floatarr in floatarrs:
-			tokens.append(["FLOAT_ARR", floatarr.group(), floatarr.start()])
-			working_code = working_code.replace(floatarr.group() , " "*len(floatarr.group()), 1)
-
 		specials = re.finditer("[\.:,\[\]\(\)}{<>|]", working_code)
 		for special in specials:
 			tokens.append(["SPECIAL", special.group(), special.start()])
@@ -85,23 +66,24 @@ class Lexer():
 			tokens.append(["OPERATOR", operator.group(), operator.start()])
 			working_code = working_code.replace(operator.group(), " ", 1)
 
-		funcs = re.finditer("(^|;| |	)def['\n ]", working_code, re.MULTILINE)
+		if not customizable["braces"]:
+			indents = re.finditer(r"\t", working_code)
+			for indent in indents:
+				tokens.append(["INDENT", r"\t", indent.start()])
+				working_code = working_code.replace(indent.group(), "    ", 1)
+
+		funcs = re.finditer("(^|;| )def[\n ]", working_code, re.MULTILINE)
 		for func in funcs:
 			tokens.append(["FUNCTION", "def", func.start()])
 			working_code = working_code.replace("def", "   ", 1)
 				
-		returns = re.finditer("(^|;| |	)return['\n ]", working_code, re.MULTILINE)
+		returns = re.finditer("(^|;| )return[\n ]", working_code, re.MULTILINE)
 		for _return in returns:
 			tokens.append(["RETURN", "return", _return.start()])
 			working_code = working_code.replace("return", "      ")
 
-		if not customizable["braces"]:
-			indents = re.finditer("	", working_code)
-			for indent in indents:
-				tokens.append(["INDENT", "	", indent.start()])
-
 		if customizable["namespaces"]:
-			namespaces = re.finditer("(^|;| |	)namespace['\n ]", working_code, re.MULTILINE)
+			namespaces = re.finditer("(^|;| )namespace[\n ]", working_code, re.MULTILINE)
 			for namespace in namespaces:
 				tokens.append(["NAMESPACE", "namespace", namespace.start()])
 				working_code = working_code.replace("namespace", "         ", 1)
@@ -117,18 +99,18 @@ class Lexer():
 				tokens.append(["NEWLINE", "\n", newline.start()])
 
 		if customizable["contextmanagers"]:
-			withs = re.finditer("(^|;| |	)with['\n ]", working_code, re.MULTILINE)
+			withs = re.finditer("(^|;| )with[\n ]", working_code, re.MULTILINE)
 			for _with in withs:
 				tokens.append(["WITH", "with", _with.start()])
 				working_code = working_code.replace("with", "    ")
 
 		if customizable["oop"]:
-			classes = re.finditer("(^|;| |	)class['\n ]", working_code, re.MULTILINE)
+			classes = re.finditer("(^|;| )class[\n ]", working_code, re.MULTILINE)
 			for _class in classes:
 				tokens.append(["CLASS", "class", _class.start()])
 				working_code = working_code.replace("class", "    ")
 
-		vars = re.finditer("(^|;| |	)let['\n ]", working_code, re.MULTILINE)
+		vars = re.finditer("(^|;| )let[\n ]", working_code, re.MULTILINE)
 		for var in vars:
 			tokens.append(["VAR", "let", var.start()])
 			working_code = working_code.replace("let", "   ", 1)
@@ -150,47 +132,58 @@ class Lexer():
 			working_code = working_code.replace(integer.group(), " "*len(integer.group()), 1)
 			
 
-		tokens.append(["EOF", "reached end of file"])
+		tokens.append(["EOF", "reached end of file", float("inf")])
+
 		return Token(tokens), customizable["braces"], customizable["mainmethods"]
+
+
 
 class Token():
 	def __init__(self, tokens):
 		self.tokens = tokens
 
 	def __repr__(self):
-		return self.tokens
-
-	def __str__(self):
-		return str(self.tokens)
+		return repr(self.tokens)
 
 	def sort(self):
 		positions = {
 			}
 		tokens = []
-		try:
-			for token in self.tokens:
-					positions[token[2]] = [token[0], token[1]]
-		except IndexError:
-			pass
+
+		for token in self.tokens:
+			positions[token[2]] = [token[0], token[1]]
 
 		token_positions = sorted(positions)
 
 		for pos in token_positions:
 			tokens.append(positions[pos])
-		
-		instructions = sorted(positions.items())
-
-		self.instructions = []
-
-		for item in instructions:
-			item = list(item)
-			item[0] = str(item[0])
-			one, two = item[1]
-			item.pop(1)
-			item.append(one)
-			item.append(two)
-			self.instructions.append(item)
-
 
 		self.tokens = tokens
 		self.positions = positions
+
+		prev = _Token()
+		idx = 0
+		indent_count = 0
+		current_indent_count = 0
+
+		
+		while idx < len(self.tokens):
+			current = _Token(self.tokens[idx])
+
+			if prev.type == "NEWLINE" and current.type == "INDENT":
+				current_indent_count = 1
+				for tok in self.tokens[idx:]:
+					if tok[0] == "INDENT":
+						current_indent_count+=1
+					else:
+						idx+=current_indent_count-1
+						break
+
+			for i in range(indent_count-current_indent_count):
+				self.tokens.insert(idx, ["DEDENT", "-\\t"])
+
+			indent_count = current_indent_count
+			prev = current
+			idx+=1
+
+		

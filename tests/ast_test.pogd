@@ -1,0 +1,9 @@
+include
+{
+	"mylib.dll"
+	"myotherlib.dll"
+}
+
+
+ using MyNamespace.NestedNamespace
+ using MyLibrary

@@ -12,13 +12,12 @@ from dis import dis
 from argparse import ArgumentParser
 from pprint import pprint
 
-
 def main(argc: int, argv: list[str]):
 	argparser = ArgumentParser(description="Cooler Command Prompt (R) PogScript Compiler", prog = "pogc")
 
 	argparser.add_argument('-s', '--show', metavar='', type=str, help='show AST, tokens, disassembly, or ALL')
 	argparser.add_argument('filename', type=str, help='Source file')
-
+	
 	args = argparser.parse_args()
 	
 	try:
@@ -51,14 +50,18 @@ def main(argc: int, argv: list[str]):
 	
 	tokens.sort()
 
+	if not braces:
+		throw("Indents have not been fully implemented and only brace delimited scopes are currently supported")
+
 	if show in ("tok", "toks", "token", "tokens", "all"):
 		print("Raw:\n\n\n")
 		print(tokens)
 		print("\n\n")
 		print("Pretty-print:\n\n\n")
 		pprint(tokens.tokens)
+		print(f"Length of tokens: {len(tokens.tokens)}\n\n")
 
-	parser = Parser4(tokens.tokens)
+	parser = Parser4(tokens.tokens, braces)
 
 	raw_ast = parser.parse()
 
@@ -68,11 +71,12 @@ def main(argc: int, argv: list[str]):
 		ast_name_str = f"{CYAN}AST @File['{file}']{END}"
 		print("Raw:\n\n\n")
 		print(ast_name_str)
-		print(str(raw_ast).replace("\{GREEN}", "").replace("\\u001b[32m", "").replace("\\u001b[0m", "").replace("\\u001b[34m", ""))
+		print(str(raw_ast).replace("\\x1b[0m", "").replace("\\x1b[32m", "").replace("\\x1b[34m", ""))
 		print("\n\n")
 		print("Pretty-print:\n\n\n")
 		print(ast_name_str)
 		print(ast)
+		print("\n")
 	
 	if show in ("dis", "disassemble", "disassembly", "all"):
 		print("Cannot show disassembly at this time.")
