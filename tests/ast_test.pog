@@ -1,13 +1,9 @@
-<ast_test.pogd>
 using braces
-using namespaces
 
-namespace HelloWorld {}
-
-namespace HelloWorld2 {
-	
-	let myint = 923
-	let mystr = "Hello World!"
-	9+2*123/384-38+93
-
+def func() {
+	0-2*29+9/8
 }
+
+let myint = 923
+let mystr = "Hello World!"
+9+2*123/384-38+93

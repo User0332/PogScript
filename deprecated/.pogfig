@@ -1,0 +1,10 @@
+{"null" : "null"}
+["%SCRIPT%/modifiers"]
+{"libc" : "%SCRIPT%/libc/libc.lst"}
+["%SCRIPT%/libc", "%SCRIPT%/poglib", "%FILE%", "%FILE%/lib", "%FILE%/extern"]
+
+
+#File modifier data on line 1
+#File modifier paths on line 2
+#Special import names on line 3
+#Import paths on line 4

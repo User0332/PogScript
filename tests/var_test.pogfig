@@ -1,0 +1,4 @@
+{}
+["%FILE%/modifiers", "%COMPILER%/modifiers"]
+{"proglib" : ".proglib"}
+["%FILE%/imports", "%COMPILER%/imports"]

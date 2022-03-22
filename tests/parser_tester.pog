@@ -5,7 +5,7 @@ using braces
 
 import random;
 
-def main(int argc, char[] argv) { 
+def main(int argc, char* argv[]) { 
 	let var = null; "For now";
 	let one = null;
 	let two = null;

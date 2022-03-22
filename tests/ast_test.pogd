@@ -1,9 +1,11 @@
-include
+section include
 {
 	"mylib.dll"
 	"myotherlib.dll"
 }
 
-
- using MyNamespace.NestedNamespace
- using MyLibrary
+section using
+{
+ MyNamespace.NestedNamespace
+ MyLibrary
+}
