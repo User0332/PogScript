@@ -121,13 +121,12 @@ def main(argc: int, argv: list[str]):
 
 
 	parser = Parser3(tokens.tokens, braces, semicolons, code)
-	parser.parse()
+
+	raw_ast = parser.parse()
+	ast = dumps(raw_ast, indent=1)
 
 	throwerrors()
 	checkfailure()
-
-	raw_ast = parser.ast
-	ast = dumps(raw_ast, indent=1)
 
 	if show in ("ast", "tree", "all"):
 		ast_name_str = f"{CYAN}AST @File['{file}']{END}"
