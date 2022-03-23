@@ -66,12 +66,17 @@ class Lexer():
 			tokens.append(["ASSIGNMENT", "=", assignment.start()])
 			working_code = working_code.replace("=", " ", 1)
 
+		floats = re.finditer("[0-9]+\.[0-9]+")
+		for _float in floats:
+			tokens.append("FLOAT", _float.group(), _float.start())
+			working_code = working_code.replace(_float.group(), " "*len(_float.group()), 1)
+
 		specials = re.finditer("[\.:,\[\]\(\)}{<>|]", working_code)
 		for special in specials:
 			tokens.append(["SPECIAL", special.group(), special.start()])
 			working_code = working_code.replace(special.group(), " ", 1)
 
-		operators = re.finditer("[/\*\-\+]", working_code)
+		operators = re.finditer("\*\*|[/\*\-\+]", working_code)
 		for operator in operators:
 			tokens.append(["OPERATOR", operator.group(), operator.start()])
 			working_code = working_code.replace(operator.group(), " ", 1)
