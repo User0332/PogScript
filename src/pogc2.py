@@ -2,7 +2,7 @@
 from lexer import Lexer
 from pog_parser3 import Parser3
 from compiler import Compiler
-from utils import checkfailure, throw, warn, throwerrors, CYAN, END
+from utils import checkfailure, throw, warn, throwerrors, printwarnings, CYAN, END
 #Stdlib Imports
 from json import loads, dumps
 from json.decoder import JSONDecodeError
@@ -17,7 +17,7 @@ def main(argc: int, argv: list[str]):
 	argparser = ArgumentParser(description="Cooler Command Prompt (R) PogScript Compiler", prog = "pogc")
 	
 	argparser.add_argument('-d', '--dump', type=str, help="show AST, tokens, disassembly, or ALL")
-	argparser.add_argument('-s', '--suppresswarnings', help="suppress all warnings", action="store_true")
+	argparser.add_argument('-s', '--suppresswarnings',type=bool, help="suppress all warnings", action="store_true", default=True)
 	argparser.add_argument('filename', nargs="?", default="", type=str, help='Source file')
 	outgroup = argparser.add_mutually_exclusive_group()
 	outgroup.add_argument('-o', '--out', type=str, help="output file")
@@ -90,6 +90,7 @@ def main(argc: int, argv: list[str]):
 		throw(f"Fatal Error POGCC 017: Either the file modifier or special import data in {pogfig} is not valid JSON")
 		
 	throwerrors()
+	if warnings: printwarnings()
 	checkfailure()
 
 	lexer = Lexer(code)
@@ -111,14 +112,12 @@ def main(argc: int, argv: list[str]):
 
 
 	if out.endswith(".lst"):
-		formatted_list = "[\n"
-		for token in tokens.tokens:
-			formatted_list+=str(token)+"\n"
-		formatted_list+="]"
-		
-		with open(out, "w") as f:
-			f.write(formatted_list)
+		formatted_list = ["[\n"]
 
+		formatted_list += [str(token)+"\n" for token in tokens.tokens] + ["]"]
+
+		with open(out, "w") as f:
+			f.write("".join(formatted_list))
 
 
 	parser = Parser3(tokens.tokens, braces, semicolons, code)
@@ -127,6 +126,7 @@ def main(argc: int, argv: list[str]):
 	ast = dumps(raw_ast, indent=1)
 
 	throwerrors()
+	if warnings: printwarnings()
 	checkfailure()
 
 	if show in ("ast", "tree", "all"):
@@ -148,6 +148,7 @@ def main(argc: int, argv: list[str]):
 	compiler.traverse()
 
 	throwerrors()
+	if warnings: printwarnings()
 	checkfailure()
 
 	if out.endswith(".asm"):

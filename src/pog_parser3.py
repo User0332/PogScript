@@ -37,13 +37,23 @@ class VariableDeclarationNode:
 		return f'{{"Variable Declaration" : {{ "type" : "{self.dtype}", "name" : "{self.name}" }} }}'
 
 class VariableDefinitionNode:
-	def __init__(self, dtype: str, name: str, expression: Node):
+	def __init__(self, dtype: str, name: str, expression: Node, idx: int):
 		self.dtype = dtype
 		self.name = name
 		self.expr = str(expression)
+		self.idx = idx
 
 	def __repr__(self):
-			return f'{{"Variable Definition" : {{ "type" : "{self.dtype}", "name" : "{self.name}", "value" : {self.expr} }} }}'
+		return f'{{"Variable Defintion" : {{ "type" : "{self.dtype}", "name" : "{self.name}", "value" : {self.expr}, "index" : {self.idx} }} }}'
+
+class VariableAssignmentNode:
+	def __init__(self, name: str, expression: Node, idx: int):
+		self.name = name
+		self.expr = str(expression)
+		self.idx = idx
+
+	def __repr__(self):
+			return f'{{"Variable Assignment" : {{ "name" : "{self.name}", "value" : {self.expr}, "index" : {self.idx} }} }}'
 
 class VariableAccessNode:
 	def __init__(self, var_tok: Token):
@@ -232,12 +242,28 @@ class Parser3:
 						throw("POGCC 018: Expected value after assignment operator '='", code)
 						return UnimplementedNode()
 					else:
-						return VariableDefinitionNode("DWORD int", name, expr)
+						return VariableDefinitionNode("DWORD int", name, expr, self.current.idx)
 				else:
 					line, idx, linenum = strgetline(self.code, self.current.idx)
 					code = formatline(line, idx, linenum)
 					throw("POGCC 018: Expecting '=' or <newline>", code)
 					return UnimplementedNode()
 
+		elif self.current.type == "IDENTIFIER":
+			name = self.current.value
+			self.advance()
+			if self.current.type == "=":
+				self.advance()
+				expr = self.expr()
+				if expr is None:
+					self.idx-=2
+					self.advance()
+
+					line, idx, linenum = strgetline(self.code, self.current.idx)
+					code = formatline(line, idx, linenum)
+					throw("POGCC 018: Expected value after assignment operator '='", code)
+					return UnimplementedNode()
+				else:
+					return VariableAssignmentNode(name, expr, self.current.idx)
 
 		return self.bin_op(self.comp_expr, ('and', 'or'))
