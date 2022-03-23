@@ -111,12 +111,13 @@ def main(argc: int, argv: list[str]):
 
 
 	if out.endswith(".lst"):
+		formatted_list = "[\n"
+		for token in tokens.tokens:
+			formatted_list+=str(token)+"\n"
+		formatted_list+="]"
+		
 		with open(out, "w") as f:
-			pprint(tokens.tokens, f)
-		with open(out, "r") as f:
-			list_tokens = f.read().replace("'", '"')
-		with open(out, "w") as f:
-			f.write(list_tokens)
+			f.write(formatted_list)
 
 
 
@@ -143,7 +144,7 @@ def main(argc: int, argv: list[str]):
 		with open(out, "w") as f:
 			f.write(ast)
 
-	compiler = Compiler(loads(ast))
+	compiler = Compiler(raw_ast)
 	compiler.traverse()
 
 	throwerrors()
@@ -166,35 +167,6 @@ def main(argc: int, argv: list[str]):
 
 	return 0
 
-	'''
-	chdir(dirname(file))
-
-	file = spl(file)[1].split(".", 1)[0]
-
-	with open(file+".py", "w") as f:
-		f.write(pycode)
-
-	compiled = compile(pycode, file+".pogc", "exec")
-
-	print("Token positions:")
-	for item in tokens.instructions:
-		print(" ".join(item))
-		sleep(0.1)
-
-	sleep(2)
-
-	print(f"Disassembly of {argv[1]}:")
-	dis(compiled)
-
-	sleep(2)
-	
-	with open(file+".pogc", "wb") as f:
-		f.write(compiled.co_code)
-		f.write(compiled.co_lnotab)
-
-	with open(file+".pogc", "a") as f:
-		f.write(f"\n{compiled.co_argcount}\n{compiled.co_cellvars}\n{compiled.co_consts}\n{compiled.co_filename}\n{compiled.co_firstlineno}\n{compiled.co_flags}\n{compiled.co_freevars}\n{compiled.co_kwonlyargcount}\n{compiled.co_varnames}")
-	'''
 
 if __name__ == "__main__":
 	exit(main(len(argv), argv))
