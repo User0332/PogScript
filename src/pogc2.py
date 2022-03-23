@@ -94,7 +94,7 @@ def main(argc: int, argv: list[str]):
 
 	lexer = Lexer(code)
 
-	tokens, braces, mainmethods = lexer.tokenize()
+	tokens, braces, mainmethods, semicolons = lexer.tokenize()
 	
 	tokens.sort()
 
@@ -120,7 +120,7 @@ def main(argc: int, argv: list[str]):
 
 
 
-	parser = Parser3(tokens.tokens, braces, code)
+	parser = Parser3(tokens.tokens, braces, semicolons, code)
 	parser.parse()
 
 	throwerrors()

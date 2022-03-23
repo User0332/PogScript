@@ -60,25 +60,32 @@ class UnimplementedNode:
 
 
 class Parser3:
-	def __init__(self, tokens, braces, code):
+	def __init__(self, tokens, braces, semicolons, code):
 		self.tokens = tokens
 		self.braces = braces
-		self.ast = {}
+		self.semicolons = semicolons
 		self.code = code
 		self.idx = -1
 		self.advance()
 
 	def parse(self):
+		ast = {}
+
 		while self.current.type != "EOF":
 			expr = str(self.expr())
-			if self.current.type == "NEWLINE":
-				self.advance()
+
+			if self.current.type != "NEWLINE":
+				end_statement_char = "';'" if self.semicolons else "<newline>"
+				throw(f"POGCC 030: Missing end-of-statement token {end_statement_char}")
 			
+			self.advance()
 
 			expr = "{}" if expr is None else expr
 	
 
-			self.ast[f"Expression @Idx[{self.idx}]"] = loads(expr)
+			ast[f"Expression @Idx[{self.idx}]"] = loads(expr)
+
+		return ast
 
 	def advance(self):
 		self.idx+=1
@@ -99,6 +106,7 @@ class Parser3:
 			if fac is None:
 				self.idx-=2
 				self.advance()
+				
 				line, idx, linenum = strgetline(self.code, self.current.idx)
 				code = formatline(line, idx, linenum)
 				throw("POGCC 018: Expecting value or expression", code)
@@ -172,41 +180,44 @@ class Parser3:
 		return self.bin_op(self.term, ("+", "-"))
 
 	def expr(self):
-		if self.current.type == "INTVAR":
+		if self.current.type == "INT":
 			self.advance()
-			if self.current.type != "IDENTIFIER":
-				self.idx-=2
+			if self.current.type == "VAR":
 				self.advance()
-				
-				line, idx, linenum = strgetline(self.code, self.current.idx)
-				code = formatline(line, idx, linenum)
-				throw("POGCC 018: Expected Indentifier after 'let'", code)
-				return UnimplementedNode()
-		
-			name = self.current.value
-			self.advance()
-
-			if self.current.type == "NEWLINE":
-				self.advance()
-				return VariableDeclarationNode("DWORD int", name, self.idx)
-
-			elif self.current.value == "=":
-				self.advance()
-				expr = self.expr()
-				if expr is None:
+				if self.current.type != "IDENTIFIER":
 					self.idx-=2
 					self.advance()
-					print(self.current.idx)
+					
 					line, idx, linenum = strgetline(self.code, self.current.idx)
 					code = formatline(line, idx, linenum)
-					throw("POGCC 018: Expected value after assignment operator '='", code)
+					throw("POGCC 018: Expected Indentifier after 'let'", code)
 					return UnimplementedNode()
+			
+				name = self.current.value
+				self.advance()
+
+				if self.current.type == "NEWLINE":
+					self.advance()
+					return VariableDeclarationNode("DWORD int", name, self.idx)
+
+				elif self.current.value == "=":
+					self.advance()
+					expr = self.expr()
+					if expr is None:
+						self.idx-=2
+						self.advance()
+
+						line, idx, linenum = strgetline(self.code, self.current.idx)
+						code = formatline(line, idx, linenum)
+						throw("POGCC 018: Expected value after assignment operator '='", code)
+						return UnimplementedNode()
+					else:
+						return VariableDefinitionNode("DWORD int", name, expr, self.idx)
 				else:
-					return VariableDefinitionNode("DWORD int", name, expr, self.idx)
-			else:
-				line, idx, linenum = strgetline(self.code, self.current.idx)
-				code = formatline(line, idx, linenum)
-				throw("POGCC 018: Expecting '=' or <newline>", code)
-				return UnimplementedNode()
+					line, idx, linenum = strgetline(self.code, self.current.idx)
+					code = formatline(line, idx, linenum)
+					throw("POGCC 018: Expecting '=' or <newline>", code)
+					return UnimplementedNode()
+
 
 		return self.bin_op(self.comp_expr, ('and', 'or'))

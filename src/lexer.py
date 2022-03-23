@@ -43,13 +43,13 @@ class Lexer():
 			else:
 				line, idx, linenum = strgetline(self.source_code, customization.start())
 				code = formatline(line, idx, linenum)
-				throw(f"POG024: Syntax customization '{custom}' was not found.")
+				throw(f"POG 024: Syntax customization '{custom}' was not found.")
 				
 
 		if ";" in working_code and not customizable["semicolons"]:
 			line, idx, linenum = strgetline(self.source_code, working_code.index(";"))
 			code = formatline(line, idx, linenum)
-			throw("POGCC019: Unknown token ';'", code)
+			throw("POGCC 019: Unknown token ';'", code)
 				
 		logical_operators = re.finditer("==|>=|<=|>|<", working_code)
 		for op in logical_operators:
@@ -106,10 +106,15 @@ class Lexer():
 			for newline in newlines:
 				tokens.append(["NEWLINE", "\n", newline.start()])
 
-		intvars = re.finditer("(^|;| |\t)int['\n \t]", working_code, re.MULTILINE)
-		for intvar in intvars:
-			tokens.append(["INTVAR", "int", intvar.start()])
+		ints = re.finditer("(^|;| |\t)int['\n \t]", working_code, re.MULTILINE)
+		for _int in ints:
+			tokens.append(["INT", "int", _int.start()])
 			working_code = working_code.replace("int", "   ", 1)
+		
+		_vars = re.finditer("(^|;| |\t)var['\n \t]", working_code, re.MULTILINE)
+		for var in _vars:
+			tokens.append(["VAR", "var", var.start()])
+			working_code = working_code.replace("var", "   ", 1)
 
 		
 		identifiers = re.finditer("[a-zA-Z_0-9]+", working_code)
@@ -127,7 +132,7 @@ class Lexer():
 			tokens.append(["INTEGER", integer.group(), integer.start()])
 			working_code = working_code.replace(integer.group(), " "*len(integer.group()), 1)
 			
-		return Token(tokens), customizable["braces"], customizable["mainmethods"]
+		return Token(tokens), customizable["braces"], customizable["mainmethods"], customizable["semicolons"]
 
 class Token():
 	def __init__(self, tokens):
