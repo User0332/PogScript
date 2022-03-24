@@ -15,7 +15,7 @@ A sample program (for the *latest binary*) can look like this:
 int foo = 838*38
 int bar = 234*foo
 ```
-A sample program (for the *untested source*) can loom like this:
+A sample program (for the *untested source*) can look like this:
 
 >file.pog
 ```cs
