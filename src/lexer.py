@@ -25,7 +25,7 @@ class Lexer():
 			['".*?"', "STRING"],
 			["==|>=|<=|>|<", "LOGICAL_OPERATOR"],
 			["=", "ASSIGNMENT"],
-			["-?[\d]+\.[\d]+", "FLOAT"],
+			["[\d]+\.[\d]+", "FLOAT"],
 			["[\.:,\[\]\(\)}{<>|]", "SPECIAL"],
 			["\*\*|[/\*\-\+]", "OPERATOR"],
 			["(^|;| |\t)return['\s]", "RETURN", re.MULTILINE],
@@ -34,7 +34,7 @@ class Lexer():
 			["(^|;| |\t)int['\s]", "INT", re.MULTILINE],
 			["(^|;| |\t)var['\s]", "VAR", re.MULTILINE],
 			["[a-z_]\w*", "IDENTIFIER", re.IGNORECASE],
-			["-?\d+", "INTEGER"]
+			["\d+", "INTEGER"]
 		]
 
 		for regex in regexes:
