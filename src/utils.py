@@ -1,4 +1,5 @@
 from sys import stderr, exit
+from argparser import ArgumentParser
 
 
 errors = ""
@@ -84,6 +85,11 @@ class Token:
 	def __str__(self):
 		return str([self.type, self.value])
 
+class ArgParser(ArgumentParser):
+	def error(self, message):
+		throw(f"Fatal Error POGCC 031: {message.capitalize()}")
+		throwerrors()
+		exit(1)
 
 class SymbolTable:
 	def __init__(self, code):
@@ -117,7 +123,7 @@ class SymbolTable:
 			code = formatline(line, idx, linenum)
 			throw(f"POGCC 027: Name Error: Attemped to assign to undeclared variable '{name}'", code)
 		
-		self.attrs[name][2] = value
+		self.symbols[name][2] = value
 
 	def delete(self, name):
-		del self.attrs[name]
+		del self.symbols[name]

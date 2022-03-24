@@ -2,19 +2,18 @@
 from lexer import Lexer
 from pog_parser3 import Parser3
 from compiler import Compiler
-from utils import checkfailure, throw, warn, throwerrors, printwarnings, CYAN, END
+from utils import checkfailure, throw, warn, throwerrors, printwarnings, CYAN, END, ArgParser
 #Stdlib Imports
 from json import loads, dumps
 from json.decoder import JSONDecodeError
-from argparse import ArgumentParser
 from pprint import pprint
 from os import getcwd, listdir, system
 from os.path import isfile, dirname
 from ast import literal_eval
 from sys import exit, argv, executable as sys_exe
 
-def main(argc: int, argv: list[str]):
-	argparser = ArgumentParser(description="Cooler Command Prompt (R) PogScript Compiler", prog = "pogc")
+def main():
+	argparser = ArgParser(description="PogScript Compiler", prog = "pogc")
 	
 	argparser.add_argument('-d', '--dump', type=str, help="show AST, tokens, disassembly, or ALL")
 	argparser.add_argument('-s', '--suppresswarnings',type=bool, help="suppress all warnings", action="store_true", default=True)
@@ -170,4 +169,4 @@ def main(argc: int, argv: list[str]):
 
 
 if __name__ == "__main__":
-	exit(main(len(argv), argv))
+	exit(main())
