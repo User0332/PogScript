@@ -1,0 +1,10 @@
+{
+  "contributes": {
+    "languages": [
+      {
+        "id": "PogScript",
+        "extensions": [".pog"]
+      }
+    ]
+  }
+}

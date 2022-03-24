@@ -4,7 +4,6 @@ from argparser import ArgumentParser
 
 errors = ""
 warnings = ""
-thrown = False
 
 FAIL = "\033[31m"
 END = "\033[0m"
@@ -48,8 +47,6 @@ def throw(message, code=""):
 	global errors
 
 	errors+=f"{FAIL}ERROR: {message+END}\n{code}"
-	if not thrown:
-		thrown = not thrown
 
 
 def warn(string, code=""):
@@ -70,7 +67,7 @@ def printwarnings():
 	warnings = ""
 
 def checkfailure():
-	return exit(1) if errors != "" else 0
+	exit(1) if errors != "" else None
 
 class Token:
 	def __init__(self, token=None):

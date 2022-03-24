@@ -32,6 +32,4 @@ bytecode = {
 	"DEL_OBJ" : "031",
 	"EXIT" : "032",
 	"AND" : "033",
-	
-
 }
