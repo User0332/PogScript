@@ -15,7 +15,6 @@ class Compiler:
 
 		self.asm = '''section .text
 	global _start
-
 _start:
 	;do something here...
 	

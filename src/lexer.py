@@ -20,12 +20,29 @@ class Lexer():
 		
 
 		working_code = self.source_code
-		
-		strings = re.finditer('".*?"', working_code)
-		for string in strings:
-			tokens.append(["STRING", string.group(), string.start()])
-			working_code = working_code.replace(string.group(), " "*len(string.group()), 1)
 
+		regexes = [
+			['".*?"', "STRING"],
+			["==|>=|<=|>|<", "LOGICAL_OPERATOR"],
+			["=", "ASSIGNMENT"],
+			["[\d]+\.[\d]+", "FLOAT"],
+			["[\.:,\[\]\(\)}{<>|]", "SPECIAL"],
+			["\*\*|[/\*\-\+]", "OPERATOR"],
+			["(^|;| |\t)return['\s]", "RETURN", re.MULTILINE],
+			["(^|;| |\t)namespace['\s]", "NAMESPACE", re.MULTILINE],
+			[";", "NEWLINE"],
+			["(^|;| |\t)int['\s]", "INT", re.MULTILINE],
+			["(^|;| |\t)var['\s]", "VAR", re.MULTILINE],
+			["[a-z_]\w*", "IDENTIFIER", re.IGNORECASE],
+			["\d+", "INTEGER"]
+		]
+
+		for regex in regexes:
+			matches = re.finditer(regex[0], working_code, regex[2]) if len(regex) > 2 else re.finditer(regex[0], working_code)
+
+			for match in matches:
+				tokens.append([regex[1], match.group().strip(), match.start()])
+				working_code = working_code.replace(match.group(), " "*len(match.group()), 1)
 
 		modifiers = re.finditer("\$.*\n", working_code, re.MULTILINE)
 		for modifier in modifiers:
@@ -33,7 +50,7 @@ class Lexer():
 			working_code = working_code.replace(modifier.group(), " "*len(modifier.group()), 1)
 
 
-		syntax_customizations = re.finditer("(^|;| |\t)using .*['\n \t]", working_code, re.MULTILINE)
+		syntax_customizations = re.finditer("(^|;| |\t)using .*['\s]", working_code, re.MULTILINE)
 		for customization in syntax_customizations:
 			custom = customization.group().replace("using", "").replace("\n", "").replace(" ", "")
 			custom = "".join(custom.split())
@@ -50,43 +67,13 @@ class Lexer():
 			line, idx, linenum = strgetline(self.source_code, working_code.index(";"))
 			code = formatline(line, idx, linenum)
 			throw("POGCC 019: Unknown token ';'", code)
-				
-		logical_operators = re.finditer("==|>=|<=|>|<", working_code)
-		for op in logical_operators:
-			tokens.append(["LOGICAL_OPERATOR", op.group(), op.start()])
-			working_code = working_code.replace(op.group(), " "*(len(op.group())), 1)
 
-		logical_operator_kwds = re.finditer("(^|;| |\t)(not|or|and)['\n \t]", working_code, re.MULTILINE)
+		logical_operator_kwds = re.finditer("(^|;| |\t)(not|or|and)['\s]", working_code, re.MULTILINE)
 		for kewdop in logical_operator_kwds:
 			tokens.append(["LOGICAL_OPERATOR", "".join(kewdop.group().split()), kewdop.start()])
 			working_code = working_code.replace(kewdop.group(), " "*(len(op.group())), 1)
 
-		assignments = re.finditer("=", working_code)
-		for assignment in assignments:
-			tokens.append(["ASSIGNMENT", "=", assignment.start()])
-			working_code = working_code.replace("=", " ", 1)
-
-		floats = re.finditer("[0-9]+\.[0-9]+")
-		for _float in floats:
-			tokens.append("FLOAT", _float.group(), _float.start())
-			working_code = working_code.replace(_float.group(), " "*len(_float.group()), 1)
-
-		specials = re.finditer("[\.:,\[\]\(\)}{<>|]", working_code)
-		for special in specials:
-			tokens.append(["SPECIAL", special.group(), special.start()])
-			working_code = working_code.replace(special.group(), " ", 1)
-
-		operators = re.finditer("\*\*|[/\*\-\+]", working_code)
-		for operator in operators:
-			tokens.append(["OPERATOR", operator.group(), operator.start()])
-			working_code = working_code.replace(operator.group(), " ", 1)
-				
-		returns = re.finditer("(^|;| |\t)return['\n \t]", working_code, re.MULTILINE)
-		for _return in returns:
-			tokens.append(["RETURN", "return", _return.start()])
-			working_code = working_code.replace("return", "      ", 1)
-
-		ifelses = re.finditer("(^|;| |\t)(if|else)['\n \t]", working_code, re.MULTILINE)
+		ifelses = re.finditer("(^|;| |\t)(if|else)['\s]", working_code, re.MULTILINE)
 		for ifelse in ifelses:
 			tokens.append([ifelse.group().upper(), ifelse.group(), ifelse.start()])
 			working_code = working_code.replace(ifelse.group(), " "*len(ifelse.group()), 1)
@@ -95,11 +82,6 @@ class Lexer():
 			indents = re.finditer("	", working_code)
 			for indent in indents:
 				tokens.append(["INDENT", "	", indent.start()])
-
-		namespaces = re.finditer("(^|;| |\t)namespace['\n \t]", working_code, re.MULTILINE)
-		for namespace in namespaces:
-			tokens.append(["NAMESPACE", "namespace", namespace.start()])
-			working_code = working_code.replace("namespace", "         ", 1)
 
 		semicolons = re.finditer(";", working_code)
 		for semicolon in semicolons:
@@ -110,32 +92,6 @@ class Lexer():
 			newlines = re.finditer("\n", working_code)
 			for newline in newlines:
 				tokens.append(["NEWLINE", "\n", newline.start()])
-
-		ints = re.finditer("(^|;| |\t)int['\n \t]", working_code, re.MULTILINE)
-		for _int in ints:
-			tokens.append(["INT", "int", _int.start()])
-			working_code = working_code.replace("int", "   ", 1)
-		
-		_vars = re.finditer("(^|;| |\t)var['\n \t]", working_code, re.MULTILINE)
-		for var in _vars:
-			tokens.append(["VAR", "var", var.start()])
-			working_code = working_code.replace("var", "   ", 1)
-
-		
-		identifiers = re.finditer("[a-zA-Z_0-9]+", working_code)
-		for identifier in identifiers:
-			try:
-				int(identifier.group())
-				continue
-			except ValueError:
-				pass
-			tokens.append(["IDENTIFIER", identifier.group(), identifier.start()])
-			working_code = working_code.replace(identifier.group(), " "*len(identifier.group()), 1)
-
-		integers = re.finditer("[0-9]+", working_code)
-		for integer in integers:
-			tokens.append(["INTEGER", integer.group(), integer.start()])
-			working_code = working_code.replace(integer.group(), " "*len(integer.group()), 1)
 			
 		return Token(tokens), customizable["braces"], customizable["mainmethods"], customizable["semicolons"]
 
