@@ -3,6 +3,7 @@ from lexer import Lexer
 from pog_parser3 import Parser3
 from compiler import Compiler
 from utils import checkfailure, throw, warn, throwerrors, printwarnings, CYAN, END, ArgParser
+
 #Stdlib Imports
 from json import loads, dumps
 from json.decoder import JSONDecodeError
@@ -10,18 +11,27 @@ from pprint import pprint
 from os import getcwd, listdir, system
 from os.path import isfile, dirname
 from ast import literal_eval
-from sys import exit, argv, executable as sys_exe
+from sys import exit, argv
+from subprocess import call as subprocess_call
+
+#Indepenedent Environment Constants
+COMPILER_EXE_PATH = dirname(argv[0])
+DEFAULT_MODIFIER_PATH = f"{COMPILER_EXE_PATH}/modifiers"
+DEFAULT_IMPORT_PATH = f"{COMPILER_EXE_PATH}/imports"
+#
+
 
 def main():
 	argparser = ArgParser(description="PogScript Compiler", prog = "pogc")
 	
 	argparser.add_argument('-d', '--dump', type=str, help="show AST, tokens, disassembly, or ALL")
-	argparser.add_argument('-s', '--suppresswarnings',type=bool, help="suppress all warnings", action="store_true", default=True)
+	argparser.add_argument('-s', '--suppresswarnings',type=bool, help="suppress all warnings", action="store_true", default=False)
 	argparser.add_argument('filename', nargs="?", default="", type=str, help='Source file')
 	outgroup = argparser.add_mutually_exclusive_group()
 	outgroup.add_argument('-o', '--out', type=str, help="output file")
 	outgroup.add_argument('-e', '--executable', help="run compileasm.bat and produce an executable using NASM and LINK", action="store_true")
-
+	
+	
 
 	args = argparser.parse_args()
 	
@@ -51,46 +61,56 @@ def main():
 		with open(file, 'r') as f:
 			code = f.read()
 	except OSError:
-		throw("Fatal Error POGCC 022: Either the specified source file could not be found, or permission was denied.")
+		throw("Fatal Error POGCC 022: Either the specified source file could not be found, or permission was denied.", code)
 	
-	
+	#Dependent Constants
+	INPUT_FILE_PATH = dirname(file)
+	#
+
 	basesource = ".".join(file.split(".")[:-1])
 
 	if args.out == None:
 		out = basesource+".asm"
 		warn("POGCC 006: -o option unspecified, assuming assembly", f">{out}\n")
+	elif args.out.endswith((".asm", ".lst", ".json")):
+		warn(f"POGCC 004: '{args.out}' is an invalid output file. Switching to assembly by default.")
+		out = basesource+".asm"
 	else:
 		out = args.out
 
 	try:
-		pogfig = basesource+".pogfig"
+		pogfig = basesource+".pogfig.json"
 		with open(pogfig , "r") as f:
-			pogdata = f.read().splitlines()
-			modifiers = loads(pogdata[0])
-			modifier_path = literal_eval(pogdata[1])
-			spec_imports = loads(pogdata[2])
-			import_path = literal_eval(pogdata[3])
+			pogdata = load(f)
+			replace("%FILE%", INPUT_FILE_PATH).replace("%COMPILER%", COMPILER_EXE_PATH)
+			modifiers = pogdata["modifiers.names"]
+			modifier_path = pogdata["modifiers.paths"]
+			spec_imports = pogdata["imports.names"]
+			import_path = pogdata["imports.paths"]
 
 		assert (type(modifier_path) is list) and (type(import_path) is list)
-	
-	except IndexError:
-		throw(f"Fatal Error POGCC 017: Data is missing in {pogfig} - All the data is critical for correct execution of the program")
+
+	except KeyError:
+		throw(f"Fatal Error POGCC 017: Data is missing in {pogfig}")
 	except FileNotFoundError:
 		warn(f"POGCC 016: {pogfig} is missing, using default configuration")
 		modifiers = {}
-		modifier_path = [f"{sys_exe}/modifiers"]
+		modifier_path = []
 		spec_imports = {"libc" : "LIBC_LIST"}
-		import_path = [f"{sys_exe}/imports"]	
+		import_path = []	
 	except PermissionError:
-		throw(f"Fatal Error POGCC 029: Could not open {pogfig} due to a permission error.")
-	except SyntaxError or AssertionError:
+		throw(f"Fatal Error POGCC 029: Could not open {pogfig} due to a permission error")
+	except AssertionError:
 		throw(f"Fatal Error POGCC 017: The modifier or import path lists in {pogfig} are not valid lists")
 	except JSONDecodeError:
-		throw(f"Fatal Error POGCC 017: Either the file modifier or special import data in {pogfig} is not valid JSON")
+		throw(f"The data in {pogfig} is not valid JSON")
 		
 	throwerrors()
 	if warnings: printwarnings()
 	checkfailure()
+
+	modifier_path.append(DEFAULT_MODIFIER_PATH)
+	import_path.append(DEFAULT_IMPORT_PATH)
 
 	lexer = Lexer(code)
 
@@ -155,17 +175,22 @@ def main():
 			f.write(compiler.asm)
 
 	if executable:
-		system(f"assemble {out.removesuffix('.asm')}")
+		try:
+			subprocess_call("assemble")
+		except OSError:
+			throw("POGCC 022: assemble.bat is missing, destroyed, or broken")
+			
 
+	if show in ("dis", "disassemble", "disassembly", "asm", "assembly", "all"):
+		print("Disassembly:\n")
+		print(compiler.asm)
 
-	if show in ("dis", "disassemble", "disassembly", "all"):
-		warn("POGCC 001: Cannot show disassembly from -s option.")
-
-	
-
-
+	throwerrors()
+	if warnings: printwarnings()
+	checkfailure()
 
 	return 0
+
 
 
 if __name__ == "__main__":

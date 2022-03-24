@@ -1,0 +1,16 @@
+{
+    "$schema" : "../pogfig_schema/pogfig_schema.json",
+
+    "modifiers.paths" : ["%FILE%/modifiers", 
+        "%COMPILER%/modifiers"],
+
+    "modifiers.names": {
+
+    },
+
+    "imports.paths": ["%FILE%/imports", 
+        "%COMPILER%/imports"],
+
+    "imports.names": {
+        "proglib" : ".proglib"}
+}
