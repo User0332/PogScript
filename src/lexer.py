@@ -42,7 +42,7 @@ class Lexer():
 
 			for match in matches:
 				tokens.append([regex[1], match.group().strip(), match.start()])
-				working_code = working_code.replace(match.group().strip(), " "*len(match.group()), 1)
+				working_code = working_code.replace(match.group(), " "*len(match.group()), 1)
 
 		modifiers = re.finditer("\$.*\n", working_code, re.MULTILINE)
 		for modifier in modifiers:
