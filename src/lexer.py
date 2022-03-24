@@ -41,7 +41,7 @@ class Lexer():
 			matches = re.finditer(regex[0], working_code, regex[2]) if len(regex) > 2 else re.finditer(regex[0], working_code)
 
 			for match in matches:
-				tokens.append([regex[1], match.group().strip(), match.start()])
+				tokens.append([regex[1], "".join(match.group().split()), match.start()])
 				working_code = working_code.replace(match.group(), " "*len(match.group()), 1)
 
 		modifiers = re.finditer("\$.*\n", working_code, re.MULTILINE)
