@@ -25,7 +25,7 @@ def main():
 	argparser = ArgParser(description="PogScript Compiler", prog = "pogc")
 	
 	argparser.add_argument('-d', '--dump', type=str, help="show AST, tokens, disassembly, or ALL")
-	argparser.add_argument('-s', '--suppresswarnings',type=bool, help="suppress all warnings", action="store_true", default=False)
+	argparser.add_argument('-s', '--suppresswarnings', help="suppress all warnings", action="store_true", default=False)
 	argparser.add_argument('filename', nargs="?", default="", type=str, help='Source file')
 	outgroup = argparser.add_mutually_exclusive_group()
 	outgroup.add_argument('-o', '--out', type=str, help="output file")
@@ -81,8 +81,9 @@ def main():
 	try:
 		pogfig = basesource+".pogfig.json"
 		with open(pogfig , "r") as f:
-			pogdata = load(f)
-			replace("%FILE%", INPUT_FILE_PATH).replace("%COMPILER%", COMPILER_EXE_PATH)
+			pogfig_info = f.read().replace("%FILE%", INPUT_FILE_PATH).replace("%COMPILER%", COMPILER_EXE_PATH)
+			pogdata = loads(pogfig_info)
+
 			modifiers = pogdata["modifiers.names"]
 			modifier_path = pogdata["modifiers.paths"]
 			spec_imports = pogdata["imports.names"]
@@ -163,7 +164,7 @@ def main():
 		with open(out, "w") as f:
 			f.write(ast)
 
-	compiler = Compiler(raw_ast)
+	compiler = Compiler(raw_ast, code)
 	compiler.traverse()
 
 	throwerrors()

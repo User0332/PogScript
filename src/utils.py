@@ -1,5 +1,5 @@
 from sys import stderr, exit
-from argparser import ArgumentParser
+from argparse import ArgumentParser
 
 
 errors = ""

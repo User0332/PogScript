@@ -80,7 +80,7 @@ class FunctionDefinitionNode:
 		return f'{{"Function Definition" : {{"name" : "{self.name}", "arguments" : {self.args}, "body" : {self.body}  }} }}'
 
 class FunctionCallNode:
-	def __init__(self, name: str, args: list[str], idx: index):
+	def __init__(self, name: str, args: list[str], idx: int):
 		self.name = name
 		self.args = args
 		self.idx = idx

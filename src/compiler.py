@@ -1,13 +1,14 @@
-from utils import throw, AttrTable
+from utils import throw, SymbolTable
 
-global_attrs = AttrTable()
+
 
 offset = 0
 
 class Compiler:
-	def __init__(self, ast):
+	def __init__(self, ast, code):
 		self.ast = ast
 		self.asm = ""
+		self.globals = SymbolTable(code)
 
 	def traverse(self, top=None):
 		top = top if top else self.ast
