@@ -4,7 +4,7 @@ A new language written in Python
 
 **You are free to make contributions or suggestions -- just submit a pull request!**
 
-To use the compiler, download the source from ```src/``` (or the latest tested release from *Releases*)
+To use the compiler, download the latest tested release or the pre-release from the [Releases](https://github.com/User0332/PogScript/releases) tab.
 
 To view command line options, type ```pogc2 -h```
 
