@@ -5,16 +5,25 @@ from sys import (
 	exit
 )
 
-
+#Error buffers
 errors = ""
 warnings = ""
+#
 
+
+#Color Constants
 FAIL = "\033[31m"
 END = "\033[0m"
 BLUE = "\033[34m"
 CYAN = "\033[36m"
 GREEN = "\033[32m"
 YELLOW = "\033[33m"
+#
+
+
+#Getting code for error throwing
+def get_code(string, index):
+	return formatline(*strgetline(string, index))
 
 def formatline(line, idx, linenum):
 	lineno = "ln "+str(linenum)
@@ -45,8 +54,10 @@ def strgetline(string, index):
 			return [line, j+1, i+1]
 
 	return ["", 0, 0]
+#
 
 
+#Error throwing functions
 def throw(message, code=""):
 	global errors
 
@@ -72,7 +83,10 @@ def printwarnings():
 
 def checkfailure():
 	exit(1) if errors != "" else None
+#
 
+
+#Utility Classes
 class Token:
 	def __init__(self, token=None):
 		token = token if token else [None, None, None]
@@ -85,6 +99,49 @@ class Token:
 
 	def __str__(self):
 		return str([self.type, self.value])
+
+class TokenSorter():
+	def __init__(self, tokens):
+		self.tokens = tokens
+		self.idx = 0
+
+	def __repr__(self):
+		return str(self.tokens)
+
+	def __len__(self):
+		return len(self.tokens)
+
+	def __iter__(self):
+		self.idx = 0
+		return self
+
+	def __next__(self):
+		if self.idx < len(self.tokens)-1:
+			val = self.tokens[self.idx]
+			self.idx+=1
+			return val
+		else:
+			raise StopIteration
+
+	def sort(self):
+		positions = {
+			}
+		tokens = []
+	
+
+		for token in self.tokens:
+				positions[token[2]] = [token[0], token[1], token[2]]
+
+
+		token_positions = sorted(positions)
+
+		for pos in token_positions:
+			tokens.append(positions[pos])
+
+		tokens.append(["EOF", "Reached end of file", -1])
+
+		self.tokens = tokens
+		self.positions = positions
 
 class ArgParser(ArgumentParser):
 	def error(self, message):
@@ -111,20 +168,24 @@ class SymbolTable:
 		
 		return attr
 
-	def getaddr(self, name):
-		return self.get(name)[1]
-
-	def declare(self, name, dtype, address):
-		self.attrs[name] = [dtype, address, None]
+	def declare(self, name, dtype, size, address):
+		self.attrs[name] = {
+			"type" : dtype, 
+			"size" : size, 
+			"address" : address, 
+			"value" : None
+			}
 
 	def assign(self, name, value, index):
 		if name not in self.symbols.keys():
-
+			
 			line, idx, linenum = strgetline(self.code, index)
 			code = formatline(line, idx, linenum)
 			throw(f"POGCC 027: Name Error: Attemped to assign to undeclared variable '{name}'", code)
-		
-		self.symbols[name][2] = value
+		#check if value is too large to be held (size > self.symbols[name]['size'])
+
+		self.symbols[name]['value'] = value
 
 	def delete(self, name):
-		del self.symbols[name]
+		del self.symbols['name']
+#

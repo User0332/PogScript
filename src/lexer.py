@@ -6,14 +6,16 @@ from re import (
 
 from utils import (
 	throw, 
-	strgetline, 
-	formatline
+	get_code,
+	TokenSorter
 )
 
+#Lexer
 class Lexer():
 	def __init__(self, source_code):
 		self.source_code = source_code
 
+	#Uses regex patterns to search for tokens
 	def tokenize(self):
 		self.modifier_commands = []
 		tokens = []
@@ -67,14 +69,14 @@ class Lexer():
 			if custom in customizable.keys():
 				customizable[custom] = True
 			else:
-				line, idx, linenum = strgetline(self.source_code, customization.start())
-				code = formatline(line, idx, linenum)
+				code = get_code(self.source_code, customization.start())
+				
 				throw(f"POG 024: Syntax customization '{custom}' was not found.")
 				
 
 		if ";" in working_code and not customizable["semicolons"]:
-			line, idx, linenum = strgetline(self.source_code, working_code.index(";"))
-			code = formatline(line, idx, linenum)
+			code = get_code(self.source_code, working_code.index(";"))
+			
 			throw("POGCC 019: Unknown token ';'", code)
 
 		logical_operator_kwds = re_finditer("(^|;| |\t)(not|or|and)['\s]", working_code, RE_MULTILINE)
@@ -108,52 +110,10 @@ class Lexer():
 
 		unlexed = "".join(working_code.split())
 		if unlexed != "":
-			line, idx, linenum = strgetline(self.source_code, working_code.index(unlexed[0]))
-			code = formatline(line, idx, linenum)
+			code = get_code(self.source_code, working_code.index(unlexed[0]))
+			
 			throw(f"POGCC 019: Unknown token {unlexed[0]}", code)
 
 			
-		return Token(tokens), customizable["braces"], customizable["mainmethods"], customizable["semicolons"]
-
-class Token():
-	def __init__(self, tokens):
-		self.tokens = tokens
-		self.idx = 0
-
-	def __repr__(self):
-		return str(self.tokens)
-
-	def __len__(self):
-		return len(self.tokens)
-
-	def __iter__(self):
-		self.idx = 0
-		return self
-
-	def __next__(self):
-		if self.idx < len(self.tokens)-1:
-			val = self.tokens[self.idx]
-			self.idx+=1
-			return val
-		else:
-			raise StopIteration
-
-	def sort(self):
-		positions = {
-			}
-		tokens = []
-	
-
-		for token in self.tokens:
-				positions[token[2]] = [token[0], token[1], token[2]]
-
-
-		token_positions = sorted(positions)
-
-		for pos in token_positions:
-			tokens.append(positions[pos])
-
-		tokens.append(["EOF", "Reached end of file", -1])
-
-		self.tokens = tokens
-		self.positions = positions
+		return TokenSorter(tokens), customizable["braces"], customizable["mainmethods"], customizable["semicolons"]
+#

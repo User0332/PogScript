@@ -2,13 +2,13 @@ from json import loads
 
 from utils import (
 	Token, 
-	formatline, 
-	strgetline, 
+	get_code,
 	throw, 
 	warn
 )
 
 
+#Node Utility Classes
 class Node:
 	pass
 
@@ -95,8 +95,9 @@ class FunctionCallNode:
 
 	def __repr__(self):
 		return f'{{"Function Call" : {{"name" : "{self.name}", "arguments" : {self.args}, "index" : {self.idx} }} }}'
+#
 
-
+#Parser
 class Parser3:
 	def __init__(self, tokens, braces, semicolons, code):
 		self.tokens = tokens
@@ -106,6 +107,10 @@ class Parser3:
 		self.idx = -1
 		self.advance()
 
+	#Gets all the expressions in the code 
+	#(which must be split by a <newline> or ';')
+	#and formats it into JSON to be read
+	#by the compiler class
 	def parse(self):
 		ast = {}
 
@@ -132,9 +137,11 @@ class Parser3:
 		except IndexError as e:
 			self.current.type = "EOF"
 
+	# Power (**) operator
 	def power(self):
 		return self.bin_op(self.atom, ("**", ), self.factor)
 
+	#Grammar Factor
 	def factor(self):
 		current = self.current
 
@@ -145,14 +152,15 @@ class Parser3:
 				self.idx-=2
 				self.advance()
 				
-				line, idx, linenum = strgetline(self.code, self.current.idx)
-				code = formatline(line, idx, linenum)
+				code = get_code(self.code, self.current.idx)
+				
 				throw("POGCC 018: Expecting value or expression", code)
 				return UnimplementedNode()
 			return UnaryOpNode(current, fac)
 
 		return self.power()
 
+	#Grammar Binary Operation
 	def bin_op(self, func_a, ops, func_b=None):
 		if func_b is None:
 			func_b = func_a
@@ -169,9 +177,11 @@ class Parser3:
 
 		return left
 
+	#Grammar Term
 	def term(self):
 		return self.bin_op(self.factor, ('*', '/'))
 		
+	#Grammar Atom
 	def atom(self):
 		current = self.current
 
@@ -192,17 +202,18 @@ class Parser3:
 				self.advance()
 				return expression
 			else:
-				line, idx, linenum = strgetline(self.code, self.current.idx)
-				code = formatline(line, idx, linenum)
+				code = get_code(self.code, self.current.idx)
+				
 				throw("POGCC 018: Expected ')'", code)
 				return UnimplementedNode()
 
-		line, idx, linenum = strgetline(self.code, self.current.idx)
-		code = formatline(line, idx, linenum)
+		code = get_code(self.code, self.current.idx)
+		
 		throw("POGCC 018: Expected int, float, identifier, '+', '-', or '('", code)
 		self.advance()
 		return UnimplementedNode()
 
+	#Grammar Expressions
 	def comp_expr(self):
 		if self.current.type == "NOT":
 			op = self.current
@@ -226,8 +237,8 @@ class Parser3:
 					self.idx-=2
 					self.advance()
 					
-					line, idx, linenum = strgetline(self.code, self.current.idx)
-					code = formatline(line, idx, linenum)
+					code = get_code(self.code, self.current.idx)
+					
 					throw("POGCC 018: Expected Indentifier after 'let'", code)
 					return UnimplementedNode()
 			
@@ -245,15 +256,15 @@ class Parser3:
 						self.idx-=2
 						self.advance()
 
-						line, idx, linenum = strgetline(self.code, self.current.idx)
-						code = formatline(line, idx, linenum)
+						code = get_code(self.code, self.current.idx)
+						
 						throw("POGCC 018: Expected value after assignment operator '='", code)
 						return UnimplementedNode()
 					else:
 						return VariableDefinitionNode("DWORD int", name, expr, self.current.idx)
 				else:
-					line, idx, linenum = strgetline(self.code, self.current.idx)
-					code = formatline(line, idx, linenum)
+					code = get_code(self.code, self.current.idx)
+					
 					throw("POGCC 018: Expecting '=' or <newline>", code)
 					return UnimplementedNode()
 
@@ -267,11 +278,14 @@ class Parser3:
 					self.idx-=2
 					self.advance()
 
-					line, idx, linenum = strgetline(self.code, self.current.idx)
-					code = formatline(line, idx, linenum)
+					code = get_code(self.code, self.current.idx)
+					
 					throw("POGCC 018: Expected value after assignment operator '='", code)
 					return UnimplementedNode()
 				else:
 					return VariableAssignmentNode(name, expr, self.current.idx)
 
 		return self.bin_op(self.comp_expr, ('and', 'or'))
+	#
+
+#

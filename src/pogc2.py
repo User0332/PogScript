@@ -1,4 +1,4 @@
-#Local Imports
+#LOCAL MODULES
 from lexer import Lexer
 from pog_parser3 import Parser3
 from compiler import Compiler
@@ -15,7 +15,7 @@ from utils import (
 )
 
 
-#JSON DECODING
+#JSON I/O MODULES
 from json.decoder import JSONDecodeError
 
 from json import (
@@ -24,7 +24,7 @@ from json import (
 )
 
 
-#SYSTEM
+#SYSTEM MODULES
 from subprocess import (
 	call as subprocess_call
 )
