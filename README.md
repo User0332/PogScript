@@ -24,6 +24,8 @@ int var bar = 234*foo
 ```
 
 Compile it with:
->pogc2 file.pog -o {outfile} --dump {tokens|ast}
+```console
+pogc2 file.pog -o <outfile> --dump <tokens|ast>
+```
 
 where ```outfile``` can be a file ending with .lst or .json, and where the argument for --dump (-d) can be the tokens or ast
