@@ -2,6 +2,7 @@
 from lexer import Lexer
 from pog_parser3 import Parser3
 from compiler import Compiler
+
 from utils import (
 	checkfailure, 
 	throw, 
@@ -16,6 +17,7 @@ from utils import (
 
 #JSON DECODING
 from json.decoder import JSONDecodeError
+
 from json import (
 	loads, 
 	dumps
@@ -23,16 +25,21 @@ from json import (
 
 
 #SYSTEM
-from subprocess import call as subprocess_call
+from subprocess import (
+	call as subprocess_call
+)
+
 from os import (
 	getcwd, 
 	listdir, 
 	system
 )
+
 from os.path import (
 	isfile, 
 	dirname
 )
+
 from sys import (
 	exit, 
 	argv

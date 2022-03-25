@@ -1,4 +1,7 @@
-from utils import throw, SymbolTable
+from utils import (
+	throw, 
+	SymbolTable
+)
 
 
 

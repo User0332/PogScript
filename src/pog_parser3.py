@@ -1,5 +1,13 @@
-from utils import Token, formatline, strgetline, throw, warn
 from json import loads
+
+from utils import (
+	Token, 
+	formatline, 
+	strgetline, 
+	throw, 
+	warn
+)
+
 
 class Node:
 	pass
