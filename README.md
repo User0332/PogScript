@@ -4,7 +4,7 @@ A new language written in Python
 
 **You are free to make contributions or suggestions -- just submit a pull request!**
 
-To use the compiler, download the source from ```src/``` (or the latest tested release from ```bin_release/```)
+To use the compiler, download the source from ```src/``` (or the latest tested release from *Releases*)
 
 To view command line options, type ```pogc2 -h```
 
