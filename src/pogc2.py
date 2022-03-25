@@ -2,15 +2,23 @@
 from lexer import Lexer
 from pog_parser3 import Parser3
 from compiler import Compiler
-from utils import checkfailure, throw, warn, throwerrors, printwarnings, CYAN, END, ArgParser
+from utils import (checkfailure, 
+					throw, 
+					warn, 
+					throwerrors, 
+					printwarnings, 
+					CYAN, 
+					END, 
+					ArgParser)
 
-#Stdlib Imports
+
+#JSON DECODING
 from json import loads, dumps
 from json.decoder import JSONDecodeError
-from pprint import pprint
+
+#SYSTEM
 from os import getcwd, listdir, system
 from os.path import isfile, dirname
-from ast import literal_eval
 from sys import exit, argv
 from subprocess import call as subprocess_call
 
@@ -119,6 +127,10 @@ def main():
 	
 	tokens.sort()
 
+	formatted_list = ["[\n"]
+
+	formatted_list += [str(token)+"\n" for token in tokens] + ["]"]
+
 	if not braces:
 		warn("POGCC 026: Indents have not been fully implemented and it is unsafe to not use brace delimited scopes")
 
@@ -127,15 +139,11 @@ def main():
 		print(tokens)
 		print("\n\n")
 		print("Pretty-print:\n\n\n")
-		pprint(tokens.tokens)
-		print(f"Length of tokens: {len(tokens.tokens)}\n\n")
+		print(formatted_list)
+		print(f"Length of tokens: {len(tokens)}\n\n")
 
 
 	if out.endswith(".lst"):
-		formatted_list = ["[\n"]
-
-		formatted_list += [str(token)+"\n" for token in tokens.tokens] + ["]"]
-
 		with open(out, "w") as f:
 			f.write("".join(formatted_list))
 
@@ -151,14 +159,8 @@ def main():
 
 	if show in ("ast", "tree", "all"):
 		ast_name_str = f"{CYAN}AST @File['{file}']{END}"
-		print("Raw:\n\n\n")
-		print(ast_name_str)
-		print(raw_ast)
-		print("\n\n")
-		print("Pretty-print:\n\n\n")
-		print(ast_name_str)
-		print(ast)
-		print("\n")
+		print(f"Raw:\n\n\n\n{ast_name_str}\n{raw_ast}\n\n\n")
+		print(f"Pretty-print:\n\n\n{ast_name_str}\n{ast}\n\n\n")
 
 	if out.endswith(".json"):
 		with open(out, "w") as f:

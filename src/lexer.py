@@ -109,9 +109,25 @@ class Lexer():
 class Token():
 	def __init__(self, tokens):
 		self.tokens = tokens
+		self.idx = 0
 
 	def __repr__(self):
 		return str(self.tokens)
+
+	def __len__(self):
+		return len(self.tokens)
+
+	def __iter__(self):
+		self.idx = 0
+		return self
+
+	def __next__(self):
+		if self.idx < len(self.tokens)-1:
+			val = self.tokens[self.idx]
+			self.idx+=1
+			return val
+		else:
+			raise StopIteration
 
 	def sort(self):
 		positions = {
