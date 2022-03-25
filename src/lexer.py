@@ -97,8 +97,12 @@ class Lexer():
 		for comment in comments:
 			working_code = working_code.replace(comment.group(), " "*len(comment.group()), 1)
 
-		if "".join(working_code.split()) != "":
-			pass # error
+		unlexed = "".join(working_code.split())
+		if unlexed != "":
+			line, idx, linenum = strgetline(self.source_code, working_code.index(unlexed[0]))
+			code = formatline(line, idx, linenum)
+			throw(f"POGCC 019: Unknown token {unlexed[0]}", code)
+
 			
 		return Token(tokens), customizable["braces"], customizable["mainmethods"], customizable["semicolons"]
 
