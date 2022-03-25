@@ -2,25 +2,42 @@
 from lexer import Lexer
 from pog_parser3 import Parser3
 from compiler import Compiler
-from utils import (checkfailure, 
-					throw, 
-					warn, 
-					throwerrors, 
-					printwarnings, 
-					CYAN, 
-					END, 
-					ArgParser)
+from utils import (
+	checkfailure, 
+	throw, 
+	warn, 
+	throwerrors, 
+	printwarnings, 
+	CYAN, 
+	END, 
+	ArgParser
+)
 
 
 #JSON DECODING
-from json import loads, dumps
 from json.decoder import JSONDecodeError
+from json import (
+	loads, 
+	dumps
+)
+
 
 #SYSTEM
-from os import getcwd, listdir, system
-from os.path import isfile, dirname
-from sys import exit, argv
 from subprocess import call as subprocess_call
+from os import (
+	getcwd, 
+	listdir, 
+	system
+)
+from os.path import (
+	isfile, 
+	dirname
+)
+from sys import (
+	exit, 
+	argv
+)
+
 
 #Indepenedent Environment Constants
 COMPILER_EXE_PATH = dirname(argv[0])
