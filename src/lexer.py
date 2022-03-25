@@ -92,6 +92,13 @@ class Lexer():
 			newlines = re.finditer("\n", working_code)
 			for newline in newlines:
 				tokens.append(["NEWLINE", "\n", newline.start()])
+
+		comments = re.finditer("#.*$", working_code, re.MULTILINE)
+		for comment in comments:
+			working_code = working_code.replace(comment.group(), " "*len(comment.group()), 1)
+
+		if "".join(working_code.split()) != "":
+			pass # error
 			
 		return Token(tokens), customizable["braces"], customizable["mainmethods"], customizable["semicolons"]
 
