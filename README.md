@@ -15,7 +15,9 @@ A sample program (for the *latest binary*) can look like this:
 int foo = 838*38
 int bar = 234*foo
 ```
+
 A sample program (for the *untested source*) can look like this:
+(to create a new project for the current source, you can type ```pogscript new <project_name>``` which will automatically set up a directory and configurations)
 
 >file.pog
 ```cs
