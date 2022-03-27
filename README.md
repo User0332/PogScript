@@ -1,6 +1,6 @@
 # PogScript
 
-A new language written in Python
+A new, C-like language which aims to provide dynamic typng, object-oriented programming, and other high-level language features while also being compiled to x86 assembly. The code in this repository is for the base implementation, **pogc2**, which is a compiler for the language written in Python.
 
 **You are free to make contributions or suggestions -- just submit a pull request!**
 
