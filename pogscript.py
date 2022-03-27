@@ -4,10 +4,11 @@ from os import (
     mkdir, 
     getcwd
 )
+from os.path import dirname
 from json import dump
 
 DEFAULT_CONFIG = {
-    "$schema" : "../pogfig_schema/pogfig_schema.json",
+    "$schema" : f"{dirname(argv[0])}/pogfig_schema/pogfig_schema.json",
 
     "modifiers.paths" : ["%FILE%/modifiers", 
         "%COMPILER%/modifiers"],
