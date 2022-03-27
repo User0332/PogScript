@@ -6,6 +6,7 @@ from os import (
 )
 from os.path import dirname
 from json import dump
+from subprocess import call
 
 DEFAULT_CONFIG = {
     "$schema" : f"{dirname(argv[0])}/pogfig_schema/pogfig_schema.json",
@@ -27,6 +28,14 @@ DEFAULT_CONFIG = {
     "compile.optimizations" : 0
 }
 
+def compile_pog():
+    try:
+        call(["pogc2"]+argv[2:])
+    except OSError:
+        print("Please add pogc2 to your PATH")
+        exit(1)
+
+    
 
 def newproj():
     try:
@@ -52,6 +61,8 @@ def newproj():
 try:
     if argv[1] == "new":
         newproj()
+    elif argv[1] == "compile":
+        compile_pog()
 except IndexError:
     print("No option specified.")
     exit(1)
