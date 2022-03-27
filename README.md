@@ -4,7 +4,7 @@ A new, C-like language which aims to provide dynamic typng, object-oriented prog
 
 **You are free to make contributions or suggestions -- just submit a pull request!**
 
-To use the compiler, download the latest tested release or the pre-release from the [Releases](https://github.com/User0332/PogScript/releases) tab.
+To use the compiler, download the latest tested release or pre-release from the [Releases](https://github.com/User0332/PogScript/releases) tab.
 
 To view command line options, type ```pogc2 -h```
 
