@@ -1,11 +1,14 @@
+from json import dump
+
+
 from sys import argv, exit
 from os import (
     chdir, 
     mkdir, 
-    getcwd
+    getcwd,
+    rmdir
 )
 from os.path import dirname
-from json import dump
 from subprocess import call
 
 DEFAULT_CONFIG = {
@@ -43,20 +46,22 @@ def newproj():
     except IndexError:
         projname = "pogproj"
 
-    reset_dir = getcwd()
+    try:
+        rmdir(projname) #clear the directory if existent
+    except OSError:
+        pass
+
     mkdir(projname)
     chdir(projname)
 
     with open("main.pog", "w") as f:
         f.write("#your code here...")
 
-    with open("main.pogfig.json", "w") as f:
+    with open(".main_pogfig.json", "w") as f:
         dump(DEFAULT_CONFIG, f)
 
     mkdir("modifiers")
     mkdir("imports")
-
-    chdir(reset_dir)
 
 try:
     if argv[1] == "new":

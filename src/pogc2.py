@@ -104,14 +104,14 @@ def main():
 	if args.out == None:
 		out = basesource+".asm"
 		warn("POGCC 006: -o option unspecified, assuming assembly", f">{out}\n")
-	elif args.out.endswith((".asm", ".lst", ".json")):
+	elif not args.out.endswith((".asm", ".lst", ".json")):
 		warn(f"POGCC 004: '{args.out}' is an invalid output file. Switching to assembly by default.")
 		out = basesource+".asm"
 	else:
 		out = args.out
 
 	try:
-		pogfig = basesource+".pogfig.json"
+		pogfig = "."+basesource+"_pogfig.json"
 		with open(pogfig , "r") as f:
 			pogfig_info = f.read().replace("%FILE%", INPUT_FILE_PATH).replace("%COMPILER%", COMPILER_EXE_PATH)
 			pogdata = loads(pogfig_info)
