@@ -12,5 +12,8 @@
         "%COMPILER%/imports"],
 
     "imports.names": {
-        "proglib" : ".proglib"}
+        "proglib" : ".proglib"},
+
+   "compile.optimizations" : 0
+
 }

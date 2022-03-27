@@ -33,9 +33,15 @@
       "imports.names" : {
         "description" : "Special import aliases",
         "type" : "object"
+      },
+
+      "compile.optimizations" : {
+        "description" : "Compiler optimization level",
+        "type" : "number"
       }
 
     },
+    
     "required" : ["modifiers.paths", "modifiers.names", 
-        "imports.paths", "imports.names"]
+        "imports.paths", "imports.names", "compile.optimizations"]
   }

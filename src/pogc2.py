@@ -120,8 +120,12 @@ def main():
 			modifier_path = pogdata["modifiers.paths"]
 			spec_imports = pogdata["imports.names"]
 			import_path = pogdata["imports.paths"]
+			compile_optimizations = pogdata["compiler.optimizations"]
 
 		assert (type(modifier_path) is list) and (type(import_path) is list)
+
+		if type(compile_optimizations) != int:
+			raise ValueError
 
 	except KeyError:
 		throw(f"Fatal Error POGCC 017: Data is missing in {pogfig}")
@@ -136,7 +140,9 @@ def main():
 	except AssertionError:
 		throw(f"Fatal Error POGCC 017: The modifier or import path lists in {pogfig} are not valid lists")
 	except JSONDecodeError:
-		throw(f"The data in {pogfig} is not valid JSON")
+		throw(f"Fatal Error POGCC 017: The data in {pogfig} is not valid JSON")
+	except ValueError:
+		throw(f"Fatal Error POGCC 017: The compiler optimization level in {pogfig} must be an integer.")
 		
 	throwerrors()
 	if warnings: printwarnings()
