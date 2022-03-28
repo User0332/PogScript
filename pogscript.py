@@ -45,7 +45,8 @@ def newproj():
 	try:
 		projname = argv[2]
 	except IndexError:
-		projname = "pogproj"
+		print("Project name not specified.")
+		exit(1)
 
 	try:
 		rmtree(projname) #remove directory if it exists
