@@ -3,71 +3,78 @@ from json import dump
 
 from sys import argv, exit
 from os import (
-    chdir, 
-    mkdir, 
-    getcwd,
-    rmdir
+	chdir, 
+	mkdir
 )
-from os.path import dirname
+from os.path import dirname, join
 from subprocess import call
+from shutil import rmtree
+
+exe_dir = dirname(argv[0]).replace("\\", "/")
 
 DEFAULT_CONFIG = {
-    "$schema" : f"{dirname(argv[0])}/pogfig_schema/pogfig_schema.json",
+	"$schema" : f"{exe_dir}/pogfig_schema/pogfig_schema.json",
 
-    "modifiers.paths" : ["%FILE%/modifiers", 
-        "%COMPILER%/modifiers"],
+	"modifiers.paths" : ["%FILE%/modifiers", 
+		"%COMPILER%/modifiers"],
 
-    "modifiers.names" : {
+	"modifiers.names" : {
 
-    },
+	},
 
-    "imports.paths" : ["%FILE%/imports", 
-        "%COMPILER%/imports"],
+	"imports.paths" : ["%FILE%/imports", 
+		"%COMPILER%/imports"],
 
-    "imports.names" : {
+	"imports.names" : {
+		"projlib" : ".projlib"
+	},
 
-    },
-
-    "compile.optimizations" : 0
+	"compile.optimizations" : 0
 }
 
 def compile_pog():
-    try:
-        call(["pogc2"]+argv[2:])
-    except OSError:
-        print("Please add pogc2 to your PATH")
-        exit(1)
+	try:
+		call(["pogc2"]+argv[2:])
+	except OSError:
+		print("Please add pogc2 to your PATH")
+		exit(1)
 
-    
+	
 
 def newproj():
-    try:
-        projname = argv[2]
-    except IndexError:
-        projname = "pogproj"
+	try:
+		projname = argv[2]
+	except IndexError:
+		projname = "pogproj"
 
-    try:
-        rmdir(projname) #clear the directory if existent
-    except OSError:
-        pass
+	try:
+		rmtree(projname) #remove directory if it exists
+	except FileNotFoundError:
+		pass
 
-    mkdir(projname)
-    chdir(projname)
+	mkdir(projname)
+	chdir(projname)
 
-    with open("main.pog", "w") as f:
-        f.write("#your code here...")
+	with open("main.pog", "w") as f:
+		f.write("#your code here...")
 
-    with open(".main_pogfig.json", "w") as f:
-        dump(DEFAULT_CONFIG, f)
+	with open(".main_pogfig.json", "w") as f:
+		dump(DEFAULT_CONFIG, f, indent="\t")
 
-    mkdir("modifiers")
-    mkdir("imports")
+	mkdir("modifiers")
+	mkdir("imports")
+
+	with open("imports/.projlib", "w") as f:
+		f.write("mylib.lib || mylib.pog")
+
+	with open("imports/mylib.pog", "w") as f:
+		f.write("#write your library here...")
 
 try:
-    if argv[1] == "new":
-        newproj()
-    elif argv[1] == "compile":
-        compile_pog()
+	if argv[1] == "new":
+		newproj()
+	elif argv[1] == "compile":
+		compile_pog()
 except IndexError:
-    print("No option specified.")
-    exit(1)
+	print("No option specified.")
+	exit(1)
