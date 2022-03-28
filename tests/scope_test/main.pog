@@ -1,0 +1,10 @@
+using braces
+
+int var foo = 3
+
+int func main(int argc, dynamic ptr char ptr argv) #int main(int argc, char** argv)
+{
+	int var foo = 374*4
+}
+
+int var bar = foo+48
