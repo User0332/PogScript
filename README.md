@@ -11,7 +11,8 @@ To view command line options, type ```pogc2 -h```
 A sample program (for the *latest binary*) can look like this:
 
 >file.pog
-```cs
+
+```py
 int foo = 838*38
 int bar = 234*foo
 ```
@@ -20,19 +21,22 @@ A sample program (for the *untested source*) can look like this:
 (to create a new project for the current source, you can type ```pogscript new <project_name>``` which will automatically set up a directory and configurations)
 
 >file.pog
-```cs
+
+```py
 int var foo = 838*38
 int var bar = 234*foo
 ```
 
 Compile it with:
+
 ```console
 pogc2 file.pog -o <outfile> --dump <tokens|ast>
 ```
 
 NOTE: If you are using the source you can also use:
+
 ```console
 pogscript compile file.pog -o <outfile> --dump <tokens|ast>
 ```
 
-where ```outfile``` can be a file ending with .lst or .json, and where the argument for --dump (-d) can be the tokens or ast
+where ```outfile``` the argument for -o (--out) can be a file ending with .lst or .json, and where the argument for --dump (-d) can be the tokens or ast
