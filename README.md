@@ -12,7 +12,7 @@ A sample program (for the *latest binary*) can look like this:
 
 >file.pog
 
-```py
+```c
 int foo = 838*38
 int bar = 234*foo
 ```
@@ -22,7 +22,7 @@ A sample program (for the *untested source*) can look like this:
 
 >file.pog
 
-```py
+```c
 int var foo = 838*38
 int var bar = 234*foo
 ```
