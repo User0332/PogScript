@@ -54,7 +54,7 @@ DEFAULT_IMPORT_PATH = f"{COMPILER_EXE_PATH}/imports"
 
 
 def main():
-	argparser = ArgParser(description="PogScript Compiler", prog = "pogc")
+	argparser = ArgParser(description="PogScript Compiler", prog = "pogc2")
 	
 	argparser.add_argument('-d', '--dump', type=str, help="show AST, tokens, disassembly, or ALL")
 	argparser.add_argument('-s', '--suppresswarnings', help="suppress all warnings", action="store_true", default=False)

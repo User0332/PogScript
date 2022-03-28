@@ -33,6 +33,10 @@ DEFAULT_CONFIG = {
 }
 
 def compile_pog():
+	if len(argv) == 2:  #if there are no arguments given, 
+		call(["pogc2"]) #let pogc2 throw the error
+
+
 	try:
 		call(["pogc2"]+argv[2:])
 	except OSError:
