@@ -1,5 +1,5 @@
 {
-	"$schema": "../pogfig_schema/pogfig_schema.json",
+	"$schema": "../../pogfig_schema/pogfig_schema.json",
 	"modifiers.paths": [
 		"%FILE%/modifiers",
 		"%COMPILER%/modifiers"
