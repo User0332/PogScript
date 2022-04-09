@@ -2,6 +2,7 @@
 from lexer import Lexer
 from pog_parser3 import Parser3
 from compiler import Compiler
+from ast_preprocessor import SyntaxTreePreproccesor
 
 from utils import (
 	checkfailure, 
@@ -31,13 +32,14 @@ from subprocess import (
 
 from os import (
 	getcwd, 
-	listdir, 
-	system
+	listdir,
+	chdir
 )
 
 from os.path import (
 	isfile, 
-	dirname
+	dirname,
+	basename
 )
 
 from sys import (
@@ -47,9 +49,9 @@ from sys import (
 
 
 #Indepenedent Environment Constants
-COMPILER_EXE_PATH = dirname(argv[0])
-DEFAULT_MODIFIER_PATH = f"{COMPILER_EXE_PATH}/modifiers"
-DEFAULT_IMPORT_PATH = f"{COMPILER_EXE_PATH}/imports"
+COMPILER_EXE_PATH = dirname(argv[0]).replace("\\", "/")
+DEFAULT_MODIFIER_PATH = f"{COMPILER_EXE_PATH}/modifiers".replace("\\", "/")
+DEFAULT_IMPORT_PATH = f"{COMPILER_EXE_PATH}/imports".replace("\\", "/")
 #
 
 
@@ -96,10 +98,12 @@ def main():
 		throw("Fatal Error POGCC 022: Either the specified source file could not be found, or permission was denied.", code)
 	
 	#Dependent Constants
-	INPUT_FILE_PATH = dirname(file)
+	INPUT_FILE_PATH = dirname(file).replace("\\", "/")
 	#
 
-	basesource = ".".join(file.split(".")[:-1])
+	chdir(INPUT_FILE_PATH)
+
+	basesource = ".".join(basename(file).split(".")[:-1])
 
 	if args.out == None:
 		out = basesource+".asm"
@@ -109,6 +113,8 @@ def main():
 		out = basesource+".asm"
 	else:
 		out = args.out
+
+	
 
 	try:
 		pogfig = "."+basesource+"_pogfig.json"
@@ -124,7 +130,7 @@ def main():
 
 		assert (type(modifier_path) is list) and (type(import_path) is list)
 
-		if type(compile_optimizations) != int:
+		if type(compile_optimizations) is not int:
 			raise ValueError
 
 	except KeyError:
@@ -134,13 +140,15 @@ def main():
 		modifiers = {}
 		modifier_path = []
 		spec_imports = {"libc" : "LIBC_LIST"}
-		import_path = []	
+		import_path = []
+		compile_optimizations = 0
 	except PermissionError:
 		throw(f"Fatal Error POGCC 029: Could not open {pogfig} due to a permission error")
 	except AssertionError:
 		throw(f"Fatal Error POGCC 017: The modifier or import path lists in {pogfig} are not valid lists")
 	except JSONDecodeError:
 		throw(f"Fatal Error POGCC 017: The data in {pogfig} is not valid JSON")
+		raise	
 	except ValueError:
 		throw(f"Fatal Error POGCC 017: The compiler optimization level in {pogfig} must be an integer.")
 		
@@ -181,11 +189,19 @@ def main():
 	parser = Parser3(tokens.tokens, braces, semicolons, code)
 
 	raw_ast = parser.parse()
+
+	if compile_optimizations == 1:
+		simplifier = SyntaxTreePreproccesor(raw_ast)
+		raw_ast = simplifier.simplify()
+
 	ast = dumps(raw_ast, indent=1)
 
 	throwerrors()
 	if warnings: printwarnings()
 	checkfailure()
+
+	
+
 
 	if show in ("ast", "tree", "all"):
 		ast_name_str = f"{CYAN}AST @File['{file}']{END}"
@@ -197,7 +213,7 @@ def main():
 			f.write(ast)
 
 	compiler = Compiler(raw_ast, code)
-	compiler.traverse()
+	asm = compiler.traverse()
 
 	throwerrors()
 	if warnings: printwarnings()
@@ -205,7 +221,7 @@ def main():
 
 	if out.endswith(".asm"):
 		with open(out, "w") as f:
-			f.write(compiler.asm)
+			f.write(asm)
 
 	if executable:
 		try:
@@ -216,7 +232,7 @@ def main():
 
 	if show in ("dis", "disassemble", "disassembly", "asm", "assembly", "all"):
 		print("Disassembly:\n")
-		print(compiler.asm)
+		print(asm)
 
 	throwerrors()
 	if warnings: printwarnings()

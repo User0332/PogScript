@@ -29,7 +29,7 @@ DEFAULT_CONFIG = {
 		"projlib" : ".projlib"
 	},
 
-	"compile.optimizations" : 0
+	"compiler.optimizations" : 0
 }
 
 def compile_pog():

@@ -1,5 +1,6 @@
 from utils import (
-	throw, 
+	get_code,
+	throw,
 	SymbolTable
 )
 
@@ -10,7 +11,6 @@ class Compiler:
 	def __init__(self, ast: dict, code: str):
 		self.ast = ast
 		self.allocated_bytes = []
-		self.asm = ""
 		self.globals = SymbolTable(code)
 		self.source = code
 
@@ -19,7 +19,6 @@ class Compiler:
 	def declare_variable(self, node: dict):
 		name = node["name"]
 		dtype = node["type"]
-		value = node["value"]
 
 		assert dtype == "DWORD int"
 		
@@ -28,7 +27,7 @@ class Compiler:
 
 		self.globals.declare(name, dtype, 4, f"__NOACCESS.1.allocmem+{start}")
 
-	def define_varaible(self, node: dict):
+	def define_variable(self, node: dict):
 		name = node["name"]
 		dtype = node["type"]
 		value = node["value"]
@@ -52,20 +51,24 @@ class Compiler:
 
 	#Traverses the AST and passes off each node to a specialized function
 	def traverse(self, top: dict=None):
-		top = top if top else self.ast
+		asm = ""
+
+		key: str; node: dict
+		
+		top = top if top is not None else self.ast
 
 		for key, node in top.items():
-			if node.startswith("Expression"):
-				return self.traverse(node)
-			elif node.startswith("Variable Declaration"):
+			if key.startswith("Expression"):
+				self.traverse(node)
+			elif key.startswith("Variable Declaration"):
 				self.declare_variable(node)
-			elif node.startswith("Variable Definition"):
+			elif key.startswith("Variable Definition"):
 				self.define_variable(node)
-			elif node.startswith("Variable Assignment"):
+			elif key.startswith("Variable Assignment"):
 				self.assign_variable(node)
 
 		#Placeholder assembly for now
-		self.asm = f'''
+		asm+=f'''
 section .bss
 	__NOACCESS.1.allocmem resb {len(self.allocated_bytes)}
 
@@ -78,6 +81,8 @@ _start:
 	xor eax, eax
 	
 	ret'''
+
+		return asm
 	#
 
 #

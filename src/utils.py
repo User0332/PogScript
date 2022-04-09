@@ -8,6 +8,7 @@ from sys import (
 #Error buffers
 errors = ""
 warnings = ""
+thrown = False
 #
 
 
@@ -60,8 +61,10 @@ def strgetline(string, index):
 #Error throwing functions
 def throw(message, code=""):
 	global errors
+	global thrown
 
 	errors+=f"{FAIL}ERROR: {message+END}\n{code}"
+	thrown = True
 
 
 def warn(string, code=""):
@@ -82,9 +85,13 @@ def printwarnings():
 	warnings = ""
 
 def checkfailure():
-	exit(1) if errors != "" else None
+	exit(1) if thrown else None
 #
 
+#Custom Exception used in the ast preprocessor
+class NonConstantNumericalExpressionException(Exception):
+	pass
+#
 
 #Utility Classes
 class Token:
@@ -130,7 +137,7 @@ class TokenSorter():
 	
 
 		for token in self.tokens:
-				positions[token[2]] = [token[0], token[1], token[2]]
+				positions[token[2]] = [token[0], token[1], token[2]-1]
 
 
 		token_positions = sorted(positions)
@@ -138,7 +145,7 @@ class TokenSorter():
 		for pos in token_positions:
 			tokens.append(positions[pos])
 
-		tokens.append(["EOF", "Reached end of file", -1])
+		tokens.append(["EOF", "Reached end of file", tokens[-1][2]+1])
 
 		self.tokens = tokens
 		self.positions = positions
@@ -169,7 +176,7 @@ class SymbolTable:
 		return attr
 
 	def declare(self, name, dtype, size, address):
-		self.attrs[name] = {
+		self.symbols[name] = {
 			"type" : dtype, 
 			"size" : size, 
 			"address" : address, 

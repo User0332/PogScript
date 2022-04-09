@@ -1,3 +1,3 @@
 int var foo = 342*4
-int var bar = 84+3foo-7*5
+int var bar = 84+foo-7*5
 int var baz = (foo+bar)*2

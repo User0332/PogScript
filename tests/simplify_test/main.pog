@@ -1,0 +1,4 @@
+int var foo = 4*234*3*+234
+int var bar = 23*3+(234+234)*34
+int var baz = 32*324*34+32*4
+0+foo+bar+baz

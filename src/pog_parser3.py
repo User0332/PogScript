@@ -52,7 +52,7 @@ class VariableDefinitionNode:
 		self.idx = idx
 
 	def __repr__(self):
-		return f'{{"Variable Defintion" : {{ "type" : "{self.dtype}", "name" : "{self.name}", "value" : {self.expr}, "index" : {self.idx} }} }}'
+		return f'{{"Variable Definition" : {{ "type" : "{self.dtype}", "name" : "{self.name}", "value" : {self.expr}, "index" : {self.idx} }} }}'
 
 class VariableAssignmentNode:
 	def __init__(self, name: str, expression: Node, idx: int):
@@ -117,9 +117,10 @@ class Parser3:
 		while self.current.type != "EOF":
 			expr = str(self.expr())
 
-			if self.current.type != "NEWLINE":
+			if self.current.type not in ("NEWLINE", "EOF"):
 				end_statement_char = "';'" if self.semicolons else "<newline>"
-				throw(f"POGCC 030: Missing end-of-statement token {end_statement_char}")
+				code = get_code(self.code, self.current.idx)
+				throw(f"POGCC 030: Missing end-of-statement token {end_statement_char}", code)
 			
 			self.advance()
 

@@ -2,7 +2,7 @@ using braces
 
 int var foo = 3
 
-int func main(int var argc, dynamic ptr char ptr argv) #int main(int argc, char** argv)
+int func main(int var argc, char ptr ptr argv)
 {
 	int var foo = 374*4
 }
