@@ -4,10 +4,10 @@ from json import dump
 from sys import argv, exit
 from os import (
 	chdir, 
-	mkdir
+	mkdir,
+	system
 )
 from os.path import dirname, join
-from subprocess import call
 from shutil import rmtree
 
 exe_dir = dirname(argv[0]).replace("\\", "/")
@@ -31,18 +31,6 @@ DEFAULT_CONFIG = {
 
 	"compiler.optimizations" : 0
 }
-
-def compile_pog():
-	if len(argv) == 2:  #if there are no arguments given, 
-		call(["pogc2"]) #let pogc2 throw the error
-
-
-	try:
-		call(["pogc2"]+argv[2:])
-	except OSError:
-		print("Please add pogc2 to your PATH")
-		exit(1)
-
 	
 
 def newproj():
@@ -79,7 +67,7 @@ try:
 	if argv[1] == "new":
 		newproj()
 	elif argv[1] == "compile":
-		compile_pog()
+		system["pogc2"+" ".join(argv[2:])
 except IndexError:
 	print("No option specified.")
 	exit(1)
