@@ -74,12 +74,13 @@ class SyntaxTreePreproccesor:
 				try:
 					expr = self.simplify_numerical_expression({key : node})
 				except NonConstantNumericalExpressionException:
-					continue
+					pass
 				else:
 					del_nodes.append(key)
-					new_nodes.append(["Constant Numerical Expression", eval(expr)])
+					new_nodes.append(["Numerical Constant", eval(expr)])
+					continue
 
-			elif key.startswith(valid_nodes):
+			if key.startswith(valid_nodes):
 				expr = self.simplify(node)
 				top[key] = expr
 

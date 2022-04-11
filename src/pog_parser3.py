@@ -17,7 +17,7 @@ class NumNode(Node):
 		self.token = token
 
 	def __repr__(self):
-		return f'{{"Number Literal" : {self.token.value} }}'
+		return f'{{"Numerical Constant" : {self.token.value} }}'
 
 class BinOpNode(Node):
 	def __init__(self, left: Node, op: Token, right: Node):
@@ -102,7 +102,7 @@ class Parser3:
 	def __init__(self, tokens, braces, semicolons, code):
 		self.tokens = tokens
 		self.braces = braces
-		self.semicolons = semicolons
+		self.end_statement = "';'" if semicolons else '<newline>'
 		self.code = code
 		self.idx = -1
 		self.advance()
@@ -118,9 +118,8 @@ class Parser3:
 			expr = str(self.expr())
 
 			if self.current.type not in ("NEWLINE", "EOF"):
-				end_statement_char = "';'" if self.semicolons else "<newline>"
 				code = get_code(self.code, self.current.idx)
-				throw(f"POGCC 030: Missing end-of-statement token {end_statement_char}", code)
+				throw(f"POGCC 030: Missing end-of-statement token {self.end_statement}", code)
 			
 			self.advance()
 
@@ -146,7 +145,7 @@ class Parser3:
 	def factor(self):
 		current = self.current
 
-		if current.value in ("+", "-"):
+		if current.value in ("-"):
 			self.advance()
 			fac = self.factor()
 			if fac is None:
@@ -240,7 +239,7 @@ class Parser3:
 					
 					code = get_code(self.code, self.current.idx)
 					
-					throw("POGCC 018: Expected Indentifier after 'let'", code)
+					throw("POGCC 018: Expected Indentifier after 'int'", code)
 					return UnimplementedNode()
 			
 				name = self.current.value
@@ -248,7 +247,7 @@ class Parser3:
 
 				if self.current.type == "NEWLINE":
 					self.advance()
-					return VariableDeclarationNode("DWORD int", name)
+					return VariableDeclarationNode("int", name)
 
 				elif self.current.value == "=":
 					self.advance()
@@ -262,11 +261,11 @@ class Parser3:
 						throw("POGCC 018: Expected value after assignment operator '='", code)
 						return UnimplementedNode()
 					else:
-						return VariableDefinitionNode("DWORD int", name, expr, self.current.idx)
+						return VariableDefinitionNode("int", name, expr, self.current.idx)
 				else:
 					code = get_code(self.code, self.current.idx)
 					
-					throw("POGCC 018: Expecting '=' or <newline>", code)
+					throw(f"POGCC 018: Expecting '=' or {self.end_statement}", code)
 					return UnimplementedNode()
 
 		elif self.current.type == "IDENTIFIER":

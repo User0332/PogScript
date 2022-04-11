@@ -191,7 +191,9 @@ class SymbolTable:
 			throw(f"POGCC 027: Name Error: Attemped to assign to undeclared variable '{name}'", code)
 		#check if value is too large to be held (size > self.symbols[name]['size'])
 
+
 		self.symbols[name]['value'] = value
+		return self.symbols[name]['address']
 
 	def delete(self, name):
 		del self.symbols['name']
