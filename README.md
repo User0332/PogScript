@@ -2,7 +2,7 @@
 
 A new, C-style language which aims to provide dynamic typing, object-oriented programming, and other high-level language features while also being compiled to x86 assembly. The code in this repository is for the base implementation, **pogc2**, which is a compiler for the language written in Python.
 
-**You are free to make contributions or suggestions -- just submit a pull request!**
+**Feel free to make contributions or suggestions -- just submit a pull request!**
 
 To use the compiler, download the latest tested release or pre-release from the [Releases](https://github.com/User0332/PogScript/releases) tab.
 
@@ -39,4 +39,4 @@ NOTE: If you are using the source you can also use:
 pogscript compile file.pog -o <outfile> --d <tokens|ast>
 ```
 
-where ```outfile``` the argument for -o (--out) can be a file ending with .lst or .json, and where the argument for -d (--dump) can be the tokens or ast
+where ```outfile``` the argument for -o (--out) can be a file ending with .lst (tokens), .json (syntax tree), or .asm (assembly) and where the argument for -d (--dump) can be the tokens, ast, or dis (assembly output)

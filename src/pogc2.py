@@ -95,7 +95,7 @@ def main():
 		with open(file, 'r') as f:
 			code = f.read()
 	except OSError:
-		throw("Fatal Error POGCC 022: Either the specified source file could not be found, or permission was denied.", code)
+		throw("Fatal Error POGCC 022: Either the specified source file could not be found, or permission was denied.")
 	
 	#Dependent Constants
 	INPUT_FILE_PATH = dirname(file).replace("\\", "/")
@@ -110,7 +110,7 @@ def main():
 	if args.out == None:
 		out = basesource+".asm"
 		warn("POGCC 006: -o option unspecified, assuming assembly", f">{out}\n")
-	elif not args.out.endswith((".asm", ".lst", ".json")):
+	elif not args.out.endswith((".asm", ".lst", ".json")) and args.out != 'NULL':
 		warn(f"POGCC 004: '{args.out}' is an invalid output file. Switching to assembly by default.")
 		out = basesource+".asm"
 	else:
@@ -227,7 +227,7 @@ def main():
 
 	if executable:
 		try:
-			subprocess_call("assemble")
+			subprocess_call(["assemble.bat", out.removesuffix(".asm")])
 		except OSError:
 			throw("POGCC 022: assemble.bat is missing, destroyed, or broken")
 			

@@ -114,28 +114,32 @@ class Parser3:
 	def parse(self):
 		ast = {}
 
-		while self.current.type != "EOF":
+		while True:
 			expr = str(self.expr())
 
 			if self.current.type not in ("NEWLINE", "EOF"):
 				code = get_code(self.code, self.current.idx)
 				throw(f"POGCC 030: Missing end-of-statement token {self.end_statement}", code)
-			
-			self.advance()
 
 			expr = "{}" if expr is None else expr
 	
 
 			ast[f"Expression @Idx[{self.idx}]"] = loads(expr)
 
+			if self.current.type == "EOF":
+				break
+
+			self.advance()
+
 		return ast
 
 	def advance(self):
 		self.idx+=1
-		try:
-			self.current = Token(self.tokens[self.idx])
-		except IndexError as e:
-			self.current.type = "EOF"
+		self.current = Token(self.tokens[self.idx])
+
+	def decrement(self):
+		self.idx-=2
+		self.advance()
 
 	# Power (**) operator
 	def power(self):
@@ -149,13 +153,15 @@ class Parser3:
 			self.advance()
 			fac = self.factor()
 			if fac is None:
-				self.idx-=2
-				self.advance()
+				self.decrement()
 				
 				code = get_code(self.code, self.current.idx)
 				
 				throw("POGCC 018: Expecting value or expression", code)
+				
+				self.advance()
 				return UnimplementedNode()
+
 			return UnaryOpNode(current, fac)
 
 		return self.power()
@@ -234,12 +240,13 @@ class Parser3:
 			if self.current.type == "VAR":
 				self.advance()
 				if self.current.type != "IDENTIFIER":
-					self.idx-=2
-					self.advance()
+					self.decrement()
 					
 					code = get_code(self.code, self.current.idx)
 					
 					throw("POGCC 018: Expected Indentifier after 'int'", code)
+					
+					self.advance()
 					return UnimplementedNode()
 			
 				name = self.current.value
@@ -253,12 +260,13 @@ class Parser3:
 					self.advance()
 					expr = self.expr()
 					if expr is None:
-						self.idx-=2
-						self.advance()
+						self.decrement()
 
 						code = get_code(self.code, self.current.idx)
 						
 						throw("POGCC 018: Expected value after assignment operator '='", code)
+						
+						self.advance()
 						return UnimplementedNode()
 					else:
 						return VariableDefinitionNode("int", name, expr, self.current.idx)
@@ -275,15 +283,18 @@ class Parser3:
 				self.advance()
 				expr = self.expr()
 				if expr is None:
-					self.idx-=2
-					self.advance()
+					self.decrement()
 
 					code = get_code(self.code, self.current.idx)
 					
 					throw("POGCC 018: Expected value after assignment operator '='", code)
+					
+					self.advance()
 					return UnimplementedNode()
 				else:
 					return VariableAssignmentNode(name, expr, self.current.idx)
+			else:
+				self.decrement() #move index pointer back to the identifier
 
 		return self.bin_op(self.comp_expr, ('and', 'or'))
 	#
