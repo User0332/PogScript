@@ -28,7 +28,7 @@ class SyntaxTreePreproccesor:
 			elif key.startswith("Unary Operation"):
 				new_expr = self.simplify_numerical_expression(node[key])
 				expr+=key.removeprefix("Unary Operation")+new_expr
-			elif key.startswith("Number Literal"):
+			elif key.startswith("Numerical Constant"):
 				expr+=str(node[key])
 			else:
 				raise NonConstantNumericalExpressionException
@@ -81,8 +81,13 @@ class SyntaxTreePreproccesor:
 					continue
 
 			if key.startswith(valid_nodes):
-				expr = self.simplify(node)
-				top[key] = expr
+				if type(node) is dict:
+					expr = self.simplify(node)
+					new_nodes.append([key, expr])
+				elif type(node) is list:
+					expr1 = self.simplify(node[0])
+					expr2 = self.simplify(node[1])
+					new_nodes.append([key, [expr1, expr2]])
 
 		for del_node in del_nodes:
 			del top[del_node]

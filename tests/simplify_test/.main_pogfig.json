@@ -12,5 +12,5 @@
 	"imports.names": {
 		"projlib": ".projlib"
 	},
-	"compiler.optimizations": 0
+	"compiler.optimizations": 1
 }

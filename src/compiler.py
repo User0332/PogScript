@@ -92,7 +92,7 @@ class Compiler:
 
 		self.generate_expression(value)
 
-		self.instr("mov [{memaddr}], eax")
+		self.instr(f"mov [{memaddr}], eax")
 	#
 
 	def assign_variable(self, node: dict):

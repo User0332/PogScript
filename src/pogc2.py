@@ -99,6 +99,8 @@ def main():
 	
 	#Dependent Constants
 	INPUT_FILE_PATH = dirname(file).replace("\\", "/")
+	if INPUT_FILE_PATH == '':
+		INPUT_FILE_PATH = './'
 	#
 
 	chdir(INPUT_FILE_PATH)
