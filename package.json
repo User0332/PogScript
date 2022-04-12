@@ -1,0 +1,18 @@
+{
+  "contributes": {
+    "languages": [
+      {
+        "id": "PogScript",
+        "extensions": [".pog"]
+      }
+    ],
+
+    "grammars": [
+      {
+        "language": "PogScript",
+        "scopeName": "source.pog",
+        "path": "./syntax_highlighting/grammar.json"
+      }
+    ]
+  }
+}
