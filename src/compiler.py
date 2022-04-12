@@ -108,7 +108,6 @@ class Compiler:
 
 	#Traverses the AST and passes off each node to a specialized function
 	def traverse(self, top: dict=None):
-
 		key: str; node: dict
 		
 		top = top if top is not None else self.ast
