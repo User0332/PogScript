@@ -213,6 +213,8 @@ class Parser3:
 				throw("POGCC 018: Expected ')'", code)
 				return UnimplementedNode()
 
+		
+
 		code = get_code(self.code, self.current.idx)
 		
 		throw("POGCC 018: Expected int, float, identifier, '+', '-', or '('", code)
@@ -235,7 +237,7 @@ class Parser3:
 		return self.bin_op(self.term, ("+", "-"))
 
 	def expr(self):
-		if self.current.type == ("INT", "FLOAT", "CHAR"):
+		if self.current.type in ("INT", "FLOAT", "CHAR"):
 			vartype = self.current.value
 			self.advance()
 			if self.current.type in ("VAR", "PTR"):

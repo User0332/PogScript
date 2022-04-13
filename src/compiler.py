@@ -69,7 +69,7 @@ class Compiler:
 		name = node["name"]
 		dtype = node["type"]
 
-		assert dtype == "int"
+		assert dtype == "int var"
 		
 		start = len(self.allocated_bytes)-1
 		self.allocated_bytes+=[i for i in range(4)]
@@ -82,7 +82,7 @@ class Compiler:
 		value = node["value"]
 		index = node["index"]
 
-		assert dtype == "int"
+		assert dtype == "int var"
 
 		start = len(self.allocated_bytes)
 		self.allocated_bytes+=[i for i in range(4)]

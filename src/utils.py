@@ -107,10 +107,9 @@ class Token:
 	def __str__(self):
 		return str([self.type, self.value])
 
-class TokenSorter():
-	def __init__(self, tokens):
+class TokenSorter:
+	def __init__(self, tokens: list):
 		self.tokens = tokens
-		self.idx = 0
 
 	def __repr__(self):
 		return str(self.tokens)
@@ -119,16 +118,10 @@ class TokenSorter():
 		return len(self.tokens)
 
 	def __iter__(self):
-		self.idx = 0
-		return self
+		return self.tokens.__iter__()
 
 	def __next__(self):
-		if self.idx < len(self.tokens)-1:
-			val = self.tokens[self.idx]
-			self.idx+=1
-			return val
-		else:
-			raise StopIteration
+		return self.tokens.__next__()
 
 	def sort(self):
 		positions = {

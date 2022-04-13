@@ -44,7 +44,8 @@ class Lexer():
 				
 				throw(f"POGCC 024: Syntax customization '{custom}' was not found.")
 
-				comments = re_finditer("^#.*$", working_code, RE_MULTILINE)
+
+		comments = re_finditer("^#.*$", working_code, RE_MULTILINE)
 		for comment in comments:
 			working_code = working_code.replace(comment.group(), " "*len(comment.group()), 1)
 
