@@ -121,7 +121,7 @@ class Parser3:
 				code = get_code(self.code, self.current.idx)
 				throw(f"POGCC 030: Missing end-of-statement token {self.end_statement}", code)
 
-			expr = "{}" if expr is None else expr
+			expr = "{}" if expr == "None" else expr
 	
 
 			ast[f"Expression @Idx[{self.idx}]"] = loads(expr)
