@@ -64,14 +64,15 @@ def main():
 	argparser.add_argument('filename', nargs="?", default="", type=str, help='Source file')
 	outgroup = argparser.add_mutually_exclusive_group()
 	outgroup.add_argument('-o', '--out', type=str, help="output file")
-	outgroup.add_argument('-e', '--executable', help="run compileasm.bat and produce an executable using NASM and LINK", action="store_true")
+	outgroup.add_argument('-e', '--executable', help="run assemble.bat and produce an executable using NASM and LINK", type=str)
 	
 	
 
 	args = argparser.parse_args()
 	
 	warnings = not args.suppresswarnings
-	executable = args.executable
+	executable = bool(args.executable)
+	subsystem = args.executable
 	
 	try:
 		show = args.dump.lower()
@@ -227,7 +228,7 @@ def main():
 
 	if executable:
 		try:
-			subprocess_call(["assemble.bat", out.removesuffix(".asm")])
+			subprocess_call(["assemble.bat", out.removesuffix(".asm"), subsystem])
 		except OSError:
 			throw("POGCC 022: assemble.bat is missing, destroyed, or broken")
 			
