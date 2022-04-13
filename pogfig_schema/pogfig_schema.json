@@ -5,21 +5,6 @@
   "type" : "object",
   "properties" : {
 
-    "modifiers.paths" : {
-      "description" : "The file modifier paths",
-      "type" : "array",
-      "items" : {
-          "type" : "string"
-      },
-      "minItems" : 1,
-      "uniqueItems" : true
-    },
-
-    "modifiers.names" : {
-      "description" : "Modifier names",
-      "type" : "object"
-    },
-
     "imports.paths" : {
       "description" : "Import paths",
       "type" : "array",

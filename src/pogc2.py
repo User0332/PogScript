@@ -125,13 +125,11 @@ def main():
 			pogfig_info = f.read().replace("%FILE%", INPUT_FILE_PATH).replace("%COMPILER%", COMPILER_EXE_PATH)
 			pogdata = loads(pogfig_info)
 
-			modifiers = pogdata["modifiers.names"]
-			modifier_path = pogdata["modifiers.paths"]
 			spec_imports = pogdata["imports.names"]
 			import_path = pogdata["imports.paths"]
 			compile_optimizations = pogdata["compiler.optimizations"]
 
-		assert (type(modifier_path) is list) and (type(import_path) is list)
+		assert (type(import_path) is list)
 
 		if type(compile_optimizations) is not int:
 			raise ValueError
@@ -140,15 +138,13 @@ def main():
 		throw(f"Fatal Error POGCC 017: Data is missing in {pogfig}")
 	except FileNotFoundError:
 		warn(f"POGCC 016: {pogfig} is missing, using default configuration")
-		modifiers = {}
-		modifier_path = []
 		spec_imports = {"libc" : "LIBC_LIST"}
 		import_path = []
 		compile_optimizations = 0
 	except PermissionError:
 		throw(f"Fatal Error POGCC 029: Could not open {pogfig} due to a permission error")
 	except AssertionError:
-		throw(f"Fatal Error POGCC 017: The modifier or import path lists in {pogfig} are not valid lists")
+		throw(f"Fatal Error POGCC 017: The import path  in {pogfig} is not a valid list")
 	except JSONDecodeError:
 		throw(f"Fatal Error POGCC 017: The data in {pogfig} is not valid JSON")
 		raise	
@@ -159,7 +155,6 @@ def main():
 	if warnings: printwarnings()
 	checkfailure()
 
-	modifier_path.append(DEFAULT_MODIFIER_PATH)
 	import_path.append(DEFAULT_IMPORT_PATH)
 
 	lexer = Lexer(code)

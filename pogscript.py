@@ -15,13 +15,6 @@ exe_dir = dirname(argv[0]).replace("\\", "/")
 DEFAULT_CONFIG = {
 	"$schema" : f"{exe_dir}/pogfig_schema/pogfig_schema.json",
 
-	"modifiers.paths" : ["%FILE%/modifiers", 
-		"%COMPILER%/modifiers"],
-
-	"modifiers.names" : {
-
-	},
-
 	"imports.paths" : ["%FILE%/imports", 
 		"%COMPILER%/imports"],
 
