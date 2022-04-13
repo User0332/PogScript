@@ -117,14 +117,13 @@ class Compiler:
 		for key, node in top.items():
 			if key.startswith("Expression"):
 				self.traverse(node)
+				
 			elif key.startswith("Variable Declaration"):
 				self.declare_variable(node)
 			elif key.startswith("Variable Definition"):
 				self.define_variable(node)
 			elif key.startswith("Variable Assignment"):
 				self.assign_variable(node)
-
-		#Placeholder assembly for now
 
 		if top is self.ast: #add the number of bytes needed to allocate
 			self.asm=f"section .bss\n\t__NOACCESS.mainmem.1 resb {len(self.allocated_bytes)}\n\n"+self.asm

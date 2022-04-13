@@ -42,20 +42,30 @@ class Lexer():
 			else:
 				code = get_code(self.source_code, customization.start())
 				
-				throw(f"POG 024: Syntax customization '{custom}' was not found.")
+				throw(f"POGCC 024: Syntax customization '{custom}' was not found.")
+
+				comments = re_finditer("^#.*$", working_code, RE_MULTILINE)
+		for comment in comments:
+			working_code = working_code.replace(comment.group(), " "*len(comment.group()), 1)
 
 		regexes = [
 			['".*?"', "STRING"],
-			["==|>=|<=|>|<", "LOGICAL_OPERATOR"],
+			["==|>=|<=|>|<", "COMPARISON_OP"],
 			["=", "ASSIGNMENT"],
 			["[\d]+\.[\d]+", "FLOAT"],
-			["[\.:,\[\]\(\)}{<>|]", "SPECIAL"],
+			["[\.:,\[\]\(\)}{|]", "SPECIAL"],
 			["\*\*|[/\*\-\+]", "OPERATOR"],
 			["(^|;| |\t)return['\s]", "RETURN", RE_MULTILINE],
 			["(^|;| |\t)namespace['\s]", "NAMESPACE", RE_MULTILINE],
 			["(^|;| |\t)int['\s]", "INT", RE_MULTILINE],
+			["(^|;| |\t)char['\s]", "CHAR", RE_MULTILINE],
+			["(^|;| |\t)float['\s]", "FLOAT", RE_MULTILINE],
 			["(^|;| |\t)var['\s]", "VAR", RE_MULTILINE],
-			["(^|;| |\t)(not|or|and)['\s]", "LOGICAL_OPERATOR", RE_MULTILINE],
+			["(^|;| |\t)ptr['\s]", "PTR", RE_MULTILINE],
+			["(^|;| |\t)const['\s]", "CONST", RE_MULTILINE],
+			["(^|;| |\t)func['\s]", "FUNC", RE_MULTILINE],
+			["(^|;| |\t)is['\s]", "IDENTITY_COMPARISON", RE_MULTILINE],
+			["(^|;| |\t)(not|or|and)['\s]", "UNARY_LOGICAL_OP", RE_MULTILINE],
 			["(^|;| |\t)(if|else)['\s]", "CONDITIONAL_KEYWD"],
 			["[a-z_]\w*", "IDENTIFIER", RE_IGNORECASE],
 			["\d+", "INTEGER"]
@@ -65,8 +75,9 @@ class Lexer():
 			matches = re_finditer(regex[0], working_code, regex[2]) if len(regex) > 2 else re_finditer(regex[0], working_code)
 
 			for match in matches:
-				tokens.append([regex[1], "".join(match.group().split()), match.start()])
-				working_code = working_code.replace(match.group(), " "*len(match.group()), 1)
+				group = match.group().strip()
+				tokens.append([regex[1], group, match.start()])
+				working_code = working_code.replace(group, " "*len(group), 1)
 
 
 		if ";" in working_code and not customizable["semicolons"]:
@@ -88,10 +99,6 @@ class Lexer():
 			newlines = re_finditer("\n", working_code)
 			for newline in newlines:
 				tokens.append(["NEWLINE", "\n", newline.start()])
-
-		comments = re_finditer("#.*$", working_code, RE_MULTILINE)
-		for comment in comments:
-			working_code = working_code.replace(comment.group(), " "*len(comment.group()), 1)
 
 		unlexed = "".join(working_code.split())
 		if unlexed != "":

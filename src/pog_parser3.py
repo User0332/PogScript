@@ -235,16 +235,18 @@ class Parser3:
 		return self.bin_op(self.term, ("+", "-"))
 
 	def expr(self):
-		if self.current.type == "INT":
+		if self.current.type == ("INT", "FLOAT", "CHAR"):
+			vartype = self.current.value
 			self.advance()
-			if self.current.type == "VAR":
+			if self.current.type in ("VAR", "PTR"):
+				vartype+=' '+self.current.value
 				self.advance()
 				if self.current.type != "IDENTIFIER":
 					self.decrement()
 					
 					code = get_code(self.code, self.current.idx)
 					
-					throw("POGCC 018: Expected Indentifier after 'int'", code)
+					throw(f"POGCC 018: Expected Indentifier after '{vartype}'", code)
 					
 					self.advance()
 					return UnimplementedNode()
@@ -254,7 +256,7 @@ class Parser3:
 
 				if self.current.type == "NEWLINE":
 					self.advance()
-					return VariableDeclarationNode("int", name)
+					return VariableDeclarationNode(f"{vartype}", name)
 
 				elif self.current.value == "=":
 					self.advance()
@@ -269,7 +271,7 @@ class Parser3:
 						self.advance()
 						return UnimplementedNode()
 					else:
-						return VariableDefinitionNode("int", name, expr, self.current.idx)
+						return VariableDefinitionNode(f"{vartype}", name, expr, self.current.idx)
 				else:
 					code = get_code(self.code, self.current.idx)
 					
