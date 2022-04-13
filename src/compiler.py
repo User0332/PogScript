@@ -56,12 +56,12 @@ class Compiler:
 					self.instr("neg eax")
 			elif key.startswith("Numerical Constant"):
 				self.instr(f"mov eax, {node}")
-			elif key.starswith("Variable Reference"):
+			elif key.startswith("Variable Reference"):
 				name = node["name"]
 				index  = node["index"]
 
-				memaddr =  self.globals.get(name, index)["addr"]
-				self.instr(f"mov eax, {memaddr}")
+				memaddr =  self.globals.get(name, index)["address"]
+				self.instr(f"mov eax, [{memaddr}]")
 
 	#The two methods below allocate memory for the
 	#variable and place it in a symbol table
