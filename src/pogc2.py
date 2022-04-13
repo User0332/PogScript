@@ -3,6 +3,7 @@ from lexer import Lexer
 from pog_parser3 import Parser3
 from compiler import Compiler
 from ast_preprocessor import SyntaxTreePreproccesor
+from optimizer import AssemblyOptimizer
 
 from utils import (
 	checkfailure, 
@@ -192,7 +193,7 @@ def main():
 
 	raw_ast = parser.parse()
 
-	if compile_optimizations == 1:
+	if compile_optimizations >= 1:
 		simplifier = SyntaxTreePreproccesor(raw_ast)
 		raw_ast = simplifier.simplify()
 
@@ -220,6 +221,10 @@ def main():
 	throwerrors()
 	if warnings: printwarnings()
 	checkfailure()
+
+	if compile_optimizations >= 2:
+		optimizer = AssemblyOptimizer(asm)
+		asm = optimizer.optimize()
 
 	if out.endswith(".asm"):
 		with open(out, "w") as f:
