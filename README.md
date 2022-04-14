@@ -8,6 +8,8 @@ To use the compiler, download the latest tested release or pre-release from the 
 
 To view command line options, type ```pogc2 -h```
 
+<br/>
+
 A sample program (for the *latest binary*) can look like this:
 
 >main.pog
@@ -16,6 +18,8 @@ A sample program (for the *latest binary*) can look like this:
 int foo = 838*38
 int bar = 234*foo
 ```
+
+<br/>
 
 A sample program (for the *untested source*) can look like this:
 (to create a new project for the current source, you can type ```pogscript new <project_name>``` which will automatically set up a directory and configurations)
@@ -27,31 +31,12 @@ int var foo = 838*38
 int var bar = 234*foo
 ```
 
-A configuration file should be named like this: `.<filename>_pogfig.json`
+<br/>
 
-Ex. `.main_pogfig.json`
+NOTE: Information on the configuration file for the compilation can be found in `docs/guides/pogfig_guide.md`
 
-And should look something like this:
-
->.main_pogfig.json
-
-```json
-{
-	"$schema": "path-to-pogfig-schema/pogfig_schema.json",
-	"imports.paths": [
-		"%FILE%/imports",
-		"%COMPILER%/imports"
-	],
-	"imports.names": {},
-
-	"compiler.optimizations": 0
-}
-```
-
-NOTE: The information needed in the pogfig file can be found in `pogfig_schema/pogfig_schema.json`
-
-
-
+<br/>
+<br/>
 
 Compile it with:
 
@@ -59,10 +44,14 @@ Compile it with:
 pogc2 main.pog -o <outfile> -d <tokens|ast|dis>
 ```
 
+<br/>
+
 NOTE: If you are using the source you can also use:
 
 ```console
 pogscript compile main.pog -o <outfile> -d <tokens|ast|dis>
 ```
+
+<br/>
 
 where ```outfile```, the argument for -o (--out), can be a file ending with .lst (tokens), .json (syntax tree), or .asm (assembly) and where the argument for -d (--dump) can be the tokens, ast, or dis (assembly output)
