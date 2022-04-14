@@ -33,7 +33,7 @@ int var bar = 234*foo
 
 <br/>
 
-NOTE: Information for writing programs can be found in `docs/guides/progamming/`
+NOTE: Information for writing programs can be found in [docs/guides/progamming/](https://github.com/User0332/PogScript/tree/master/docs/guides/programming)
 
 <br/>
 <br/>
@@ -55,3 +55,7 @@ pogscript compile main.pog -o <outfile> -d <tokens|ast|dis>
 <br/>
 
 where ```outfile```, the argument for -o (--out), can be a file ending with .lst (tokens), .json (syntax tree), or .asm (assembly) and where the argument for -d (--dump) can be the tokens, ast, or dis (assembly output)
+
+<br/>
+
+For mor information, you can visit the [guides](https://github.com/User0332/PogScript/tree/master/docs/guides/) section of this repository.
