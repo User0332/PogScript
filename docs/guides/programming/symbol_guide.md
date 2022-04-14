@@ -31,7 +31,7 @@ Below are tables for datatypes and symbol types
 | -----------   | ----------- 
 | `var`         | standard variable
 | `ptr`         | variable pointer (this can be stacked like `char ptr ptr`) (not implemented)
-| `const`       | variable constant (not implemented)
+| `const`       | constant variable (not implemented)
 | `func`        | used to define a function (not implemented)
 
 <br/>
