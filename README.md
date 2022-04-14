@@ -10,7 +10,7 @@ To view command line options, type ```pogc2 -h```
 
 A sample program (for the *latest binary*) can look like this:
 
->file.pog
+>main.pog
 
 ```c
 int foo = 838*38
@@ -20,23 +20,49 @@ int bar = 234*foo
 A sample program (for the *untested source*) can look like this:
 (to create a new project for the current source, you can type ```pogscript new <project_name>``` which will automatically set up a directory and configurations)
 
->file.pog
+>main.pog
 
 ```c
 int var foo = 838*38
 int var bar = 234*foo
 ```
 
+A configuration file should be named like this: `.<filename>_pogfig.json`
+
+Ex. `.main_pogfig.json`
+
+And should look something like this:
+
+>.main_pogfig.json
+
+```json
+{
+	"$schema": "path-to-pogfig-schema/pogfig_schema.json",
+	"imports.paths": [
+		"%FILE%/imports",
+		"%COMPILER%/imports"
+	],
+	"imports.names": {},
+
+	"compiler.optimizations": 0
+}
+```
+
+NOTE: The information needed in the pogfig file can be found in `pogfig_schema/pogfig_schema.json`
+
+
+
+
 Compile it with:
 
 ```console
-pogc2 file.pog -o <outfile> -d <tokens|ast>
+pogc2 main.pog -o <outfile> -d <tokens|ast>
 ```
 
 NOTE: If you are using the source you can also use:
 
 ```console
-pogscript compile file.pog -o <outfile> -d <tokens|ast|dis>
+pogscript compile main.pog -o <outfile> -d <tokens|ast|dis>
 ```
 
 where ```outfile```, the argument for -o (--out), can be a file ending with .lst (tokens), .json (syntax tree), or .asm (assembly) and where the argument for -d (--dump) can be the tokens, ast, or dis (assembly output)

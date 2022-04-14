@@ -5,10 +5,10 @@ from sys import argv, exit
 from os import (
 	chdir, 
 	mkdir,
-	system
 )
 from os.path import dirname, join
 from shutil import rmtree
+from subprocess import call as sub_call
 
 exe_dir = dirname(argv[0]).replace("\\", "/")
 
@@ -60,7 +60,11 @@ try:
 	if argv[1] == "new":
 		newproj()
 	elif argv[1] == "compile":
-		system["pogc2"+" ".join(argv[2:])
+		try: sub_call(["pogc2.py"]+argv[2:])
+		except OSError:
+			try: sub_call(["pogc2"]+argv[2:])
+			except OSError:
+				print("Please add pogc2 to your PATH.")
 except IndexError:
 	print("No option specified.")
 	exit(1)
