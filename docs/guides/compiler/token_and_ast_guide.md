@@ -6,8 +6,8 @@ A token looks like this:
 
 ```cpp
 ["IDENTIFIER", "this_is_my_identifier", 27]
-	^             ^                       ^
-	token type    token value             character index
+ ^             ^                        ^
+ token type    token value              character index
 ```
 
 <br/>
