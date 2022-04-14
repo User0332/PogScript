@@ -33,7 +33,7 @@ int var bar = 234*foo
 
 <br/>
 
-NOTE: Information on the configuration file for the compilation can be found in `docs/guides/pogfig_guide.md`
+NOTE: Information for writing programs can be found in `docs/guides/progamming/`
 
 <br/>
 <br/>
