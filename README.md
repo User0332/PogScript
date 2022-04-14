@@ -56,7 +56,7 @@ NOTE: The information needed in the pogfig file can be found in `pogfig_schema/p
 Compile it with:
 
 ```console
-pogc2 main.pog -o <outfile> -d <tokens|ast>
+pogc2 main.pog -o <outfile> -d <tokens|ast|dis>
 ```
 
 NOTE: If you are using the source you can also use:
