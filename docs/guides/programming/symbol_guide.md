@@ -1,3 +1,5 @@
+# Variable and function guide
+
 Symbols can be created using a datatype followed by a symbol type and identifier.
 
 Ex.
@@ -47,4 +49,3 @@ int func myfunction(int var arg)
 }
 
 ```
-

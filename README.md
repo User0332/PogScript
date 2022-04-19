@@ -58,4 +58,4 @@ where ```outfile```, the argument for -o (--out), can be a file ending with .lst
 
 <br/>
 
-For mor information, you can visit the [guides](https://github.com/User0332/PogScript/tree/master/docs/guides/) section of this repository.
+For more information, you can visit the [guides](https://github.com/User0332/PogScript/tree/master/docs/guides/) section of this repository.

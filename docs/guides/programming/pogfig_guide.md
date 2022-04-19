@@ -1,3 +1,5 @@
+# Pogfig Configuration Guide
+
 A configuration file should be named like this: `.<filename>_pogfig.json`
 
 Ex. `.main_pogfig.json`
@@ -44,7 +46,6 @@ List of properties and their uses:
 
 <br/>
 <br/>
-
 
 Special path aliases:
 

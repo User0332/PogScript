@@ -1,3 +1,5 @@
+# Token and AST Guide
+
 A token consists of a token type, a token value, and the index in the source code that it was taken from.
 
 A token looks like this:
@@ -60,4 +62,4 @@ int var foo = astinsert {"ast_expression"}
 
 <br/>
 
-NOTE: `astimport` and `astinsert` are resolved statically at runtime, so user input would not be able to modify their behavior. All `astinsert` does is replace the current working node in the parser with the provided node.
+NOTE: `astimport` and `astinsert` are resolved statically at compile time, so user input would not be able to modify their behavior. All `astinsert` does is replace the current working node in the parser with the provided node.
