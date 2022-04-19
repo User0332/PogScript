@@ -24,9 +24,6 @@ Below are tables for datatypes and symbol types
 | `float`       | floating-point number (not implemented)
 
 <br/>
-
----------------------------------
-
 <br/>
 
 | Symbol Type   | Description 
@@ -35,6 +32,10 @@ Below are tables for datatypes and symbol types
 | `ptr`         | variable pointer (this can be stacked like `char ptr ptr`) (not implemented)
 | `const`       | constant variable (not implemented)
 | `func`        | used to define a function (not implemented)
+
+<br/>
+
+---------------------------------
 
 <br/>
 
