@@ -12,7 +12,7 @@ from os.path import (
 	exists
 )
 from shutil import move, rmtree
-from subprocess import call as sub_call
+from subprocess import run as sub_run
 
 exe_dir = dirname(argv[0]).replace("\\", "/")
 
@@ -69,7 +69,7 @@ def build():
 	remove(f"{exe_dir}/.gitignore")
 	remove(f"{exe_dir}/.gitattributes")
 	chdir(f"{exe_dir}/src")
-	sub_call(["python", "-m", "nuitka", "--onefile", "pogc2.py"])
+	sub_run(["python", "-m", "nuitka", "--onefile", "pogc2.py"])
 	move(f"pogc2.exe", f"{exe_dir}/pogc2.exe")
 	move(f"cleanup.bat", f"{exe_dir}/cleanup.bat")
 	move(f"assemble.bat", f"{exe_dir}/assemble.bat")
@@ -84,10 +84,9 @@ if len(argv) < 2:
 if argv[1] == "new":
 	newproj()
 elif argv[1] == "compile":
-	try: sub_call(["pogc2.py"]+argv[2:])
+	try: sub_run(["pogc2.py"]+argv[2:])
 	except OSError:
-		try: sub_call(["pogc2"]+argv[2:])
-		except OSError:
-			print("Please add pogc2 to your PATH.")
+		try: sub_run(["pogc2"]+argv[2:])
+		except OSError: print("Please add pogc2 to your PATH.")
 elif argv[1] == "build":
 	build()
