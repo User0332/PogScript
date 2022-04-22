@@ -5,9 +5,13 @@ from sys import argv, exit
 from os import (
 	chdir, 
 	mkdir,
+	remove,
 )
-from os.path import dirname, join
-from shutil import rmtree
+from os.path import (
+	dirname, 
+	exists
+)
+from shutil import move, rmtree
 from subprocess import call as sub_call
 
 exe_dir = dirname(argv[0]).replace("\\", "/")
@@ -33,10 +37,8 @@ def newproj():
 		print("Project name not specified.")
 		exit(1)
 
-	try:
-		rmtree(projname) #remove directory if it exists
-	except FileNotFoundError:
-		pass
+	if exists(projname):
+		rmtree(projname)
 
 	mkdir(projname)
 	chdir(projname)
@@ -56,15 +58,36 @@ def newproj():
 	with open("imports/mylib.pog", "w") as f:
 		f.write("#write your library here...")
 
-try:
-	if argv[1] == "new":
-		newproj()
-	elif argv[1] == "compile":
-		try: sub_call(["pogc2.py"]+argv[2:])
-		except OSError:
-			try: sub_call(["pogc2"]+argv[2:])
-			except OSError:
-				print("Please add pogc2 to your PATH.")
-except IndexError:
+def build():
+	rmtree(f"{exe_dir}/tests")
+	rmtree(f"{exe_dir}/docs")
+	rmtree(f"{exe_dir}/deprecated")
+	rmtree(f"{exe_dir}/syntax_highlighting")
+	remove(f"{exe_dir}/package.json")
+	remove(f"{exe_dir}/README.md")
+	remove(f"{exe_dir}/LICENSE")
+	remove(f"{exe_dir}/.gitignore")
+	remove(f"{exe_dir}/.gitattributes")
+	chdir(f"{exe_dir}/src")
+	sub_call(["python", "-m", "nuitka", "--onefile", "pogc2.py"])
+	move(f"pogc2.exe", f"{exe_dir}/pogc2.exe")
+	move(f"cleanup.bat", f"{exe_dir}/cleanup.bat")
+	move(f"assemble.bat", f"{exe_dir}/assemble.bat")
+	chdir("..")
+	rmtree(f"{exe_dir}/src")
+
+
+if len(argv) < 2:
 	print("No option specified.")
 	exit(1)
+
+if argv[1] == "new":
+	newproj()
+elif argv[1] == "compile":
+	try: sub_call(["pogc2.py"]+argv[2:])
+	except OSError:
+		try: sub_call(["pogc2"]+argv[2:])
+		except OSError:
+			print("Please add pogc2 to your PATH.")
+elif argv[1] == "build":
+	build()

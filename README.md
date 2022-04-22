@@ -6,6 +6,12 @@ A new, C-style language which aims to provide dynamic typing, object-oriented pr
 
 To use the compiler, download the latest tested release or pre-release from the [Releases](https://github.com/User0332/PogScript/releases) tab.
 
+<br/>
+
+NOTE: For the source, the command `pogscript build` will build the compiler and remove unnecessary files. You must have python and nutika installed for the command to work.
+
+<br/>
+
 To view command line options, type ```pogc2 -h```
 
 <br/>
