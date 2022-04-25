@@ -4,11 +4,11 @@ A new, C-style language which aims to provide dynamic typing, object-oriented pr
 
 **Feel free to make contributions or suggestions -- just submit a pull request!**
 
-To use the compiler, download the latest tested release or pre-release from the [Releases](https://github.com/User0332/PogScript/releases) tab.
+To use the compiler, download the latest tested release or pre-release from the [Releases](https://github.com/User0332/PogScript/releases) tab. You must also have a working version of Python 3.9 or higher for the compiler source to work.
 
 <br/>
 
-NOTE: For the source, the command `pogscript build` will build the compiler and remove unnecessary files. You must have python and nutika installed for the command to work.
+NOTE: For the source, the command `pogscript build` will build the compiler and remove unnecessary files. You must have Python and Nutika installed for the command to work.
 
 <br/>
 
