@@ -60,7 +60,7 @@ pogscript compile main.pog -o <outfile> -d <tokens|ast|dis>
 
 <br/>
 
-where ```outfile```, the argument for -o (--out), can be a file ending with .lst (tokens), .json (syntax tree), or .asm (assembly) and where the argument for -d (--dump) can be the tokens, ast, or dis (assembly output)
+where `outfile`, the argument for -o (--out), can be a file ending with .lst (tokens), .json (syntax tree), or .asm (assembly) and where the argument for -d (--dump) can be the `tokens`, `ast`, or `dis` (assembly output)
 
 <br/>
 
