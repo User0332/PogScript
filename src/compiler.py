@@ -11,6 +11,7 @@ class Compiler:
 	def __init__(self, ast: dict, code: str):
 		self.ast = ast
 		self.asm = "section .text\n\tglobal _start\n\n_start:"
+		self.scope = "global"
 		self.globals = SymbolTable(code)
 		self.source = code
 
@@ -19,6 +20,13 @@ class Compiler:
 
 	def toplevelinstr(self, instruction: str):
 		self.asm = instruction+self.asm
+
+	def traverse_function(self, node: dict):
+		self.scope = "local"
+		#make prolog
+		self.traverse(node["body"])
+		#make epilog
+		self.scope = "global"
 
 	def generate_expression(self, expr: dict):
 		key: str; node: dict
@@ -73,9 +81,9 @@ class Compiler:
 
 		assert dtype == "int var"
 
-		self.asm.toplevelinstr(f"{name} resb 4")
-
-		self.globals.declare(name, dtype, 4, name)
+		if self.scope == "global":
+			self.asm.toplevelinstr(f"{name} resb 4")
+			self.globals.declare(name, dtype, 4, name)
 
 	def define_variable(self, node: dict):
 		name = node["name"]
@@ -85,14 +93,12 @@ class Compiler:
 
 		assert dtype == "int var"
 
-		self.asm.toplevelinstr(f"{name} resb 4")
-
-		self.globals.declare(name, dtype, 4, name)
-		memaddr = self.globals.assign(name, value, index)
-
-		self.generate_expression(value)
-
-		self.instr(f"mov [{memaddr}], eax")
+		if self.scope == "global":
+			self.asm.toplevelinstr(f"{name} resb 4")
+			self.globals.declare(name, dtype, 4, name)
+			memaddr = self.globals.assign(name, value, index)
+			self.generate_expression(value)
+			self.instr(f"mov [{memaddr}], eax")
 	#
 
 	def assign_variable(self, node: dict):
