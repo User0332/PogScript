@@ -19,31 +19,8 @@ class Lexer():
 	def tokenize(self):
 		self.modifier_commands = []
 		tokens = []
-		customizable = {
-			"namespaces" : False, 
-			"semicolons" : False,
-			"braces" : False,
-			"contextmanagers" : False,
-			"oop" : False,
-			"mainmethods" : False
-		}
-
-		
 
 		working_code = self.source_code
-
-		syntax_customizations = re_finditer("(^|;| |\t)using .*['\s]", working_code, RE_MULTILINE)
-		for customization in syntax_customizations:
-			custom = customization.group().replace("using", "").replace("\n", "").replace(" ", "")
-			custom = "".join(custom.split())
-			working_code = working_code.replace(customization.group(), " "*len(customization.group()), 1)
-			if custom in customizable.keys():
-				customizable[custom] = True
-			else:
-				code = get_code(self.source_code, customization.start())
-				
-				throw(f"POGCC 024: Syntax customization '{custom}' was not found.")
-
 
 		comments = re_finditer("^#.*$", working_code, RE_MULTILINE)
 		for comment in comments:
@@ -56,6 +33,7 @@ class Lexer():
 			["[\d]+\.[\d]+", "FLOAT"],
 			["[\.:,\[\]\(\)}{|]", "SPECIAL"],
 			["\*\*|[/\*\-\+]", "OPERATOR"],
+			["\n", "NEWLINE"]
 			["(^|;| |\t)return['\s]", "RETURN", RE_MULTILINE],
 			["(^|;| |\t)namespace['\s]", "NAMESPACE", RE_MULTILINE],
 			["(^|;| |\t)int['\s]", "INT", RE_MULTILINE],
@@ -80,27 +58,6 @@ class Lexer():
 				tokens.append([regex[1], group, match.start()])
 				working_code = working_code.replace(group, " "*len(group), 1)
 
-
-		if ";" in working_code and not customizable["semicolons"]:
-			code = get_code(self.source_code, working_code.index(";"))
-			
-			throw("POGCC 019: Unknown token ';'", code)
-
-		if not customizable["braces"]:
-			indents = re_finditer("	", working_code)
-			for indent in indents:
-				tokens.append(["INDENT", "	", indent.start()])
-
-		semicolons = re_finditer(";", working_code)
-		for semicolon in semicolons:
-			tokens.append(["NEWLINE", ";", semicolon.start()])
-			working_code = working_code.replace(";", " ", 1)
-
-		if not customizable["semicolons"]:
-			newlines = re_finditer("\n", working_code)
-			for newline in newlines:
-				tokens.append(["NEWLINE", "\n", newline.start()])
-
 		unlexed = "".join(working_code.split())
 		if unlexed != "":
 			code = get_code(self.source_code, working_code.index(unlexed[0]))
@@ -108,5 +65,5 @@ class Lexer():
 			throw(f"POGCC 019: Unknown token {unlexed[0]}", code)
 
 			
-		return TokenSorter(tokens), customizable["braces"], customizable["mainmethods"], customizable["semicolons"]
+		return TokenSorter(tokens)
 #

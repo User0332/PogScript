@@ -99,10 +99,8 @@ class FunctionCallNode:
 
 #Parser
 class Parser3:
-	def __init__(self, tokens, braces, semicolons, code):
+	def __init__(self, tokens, code):
 		self.tokens = tokens
-		self.braces = braces
-		self.end_statement = "';'" if semicolons else '<newline>'
 		self.code = code
 		self.idx = -1
 		self.advance()
@@ -119,7 +117,7 @@ class Parser3:
 
 			if self.current.type not in ("NEWLINE", "EOF"):
 				code = get_code(self.code, self.current.idx)
-				throw(f"POGCC 030: Missing end-of-statement token {self.end_statement}", code)
+				throw(f"POGCC 030: Missing end-of-statement token <newline>", code)
 
 			expr = "{}" if expr == "None" else expr
 	

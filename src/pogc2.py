@@ -160,16 +160,13 @@ def main():
 
 	lexer = Lexer(code)
 
-	tokens, braces, mainmethods, semicolons = lexer.tokenize()
+	tokens = lexer.tokenize()
 	
 	tokens.sort()
 
 	formatted_list = ["[\n"]
 
 	formatted_list += [str(token)+"\n" for token in tokens] + ["]"]
-
-	if not braces:
-		warn("POGCC 026: Indents have not been fully implemented and it is unsafe to not use brace delimited scopes")
 
 	if show in ("tok", "toks", "token", "tokens", "all"):
 		print("Raw:\n\n\n")
@@ -179,13 +176,12 @@ def main():
 		print(formatted_list)
 		print(f"Length of tokens: {len(tokens)}\n\n")
 
-
 	if out.endswith(".lst"):
 		with open(out, "w") as f:
 			f.write("".join(formatted_list))
 
 
-	parser = Parser3(tokens.tokens, braces, semicolons, code)
+	parser = Parser3(tokens.tokens, code)
 
 	raw_ast = parser.parse()
 

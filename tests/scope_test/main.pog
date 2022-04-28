@@ -1,5 +1,3 @@
-using braces
-
 int var foo = 3
 
 int func main(int var argc, char ptr ptr argv)
