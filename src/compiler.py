@@ -11,12 +11,14 @@ class Compiler:
 	def __init__(self, ast: dict, code: str):
 		self.ast = ast
 		self.asm = "section .text\n\tglobal _start\n\n_start:"
-		self.allocated_bytes = []
 		self.globals = SymbolTable(code)
 		self.source = code
 
 	def instr(self, instruction: str):
 		self.asm+="\n\t"+instruction
+
+	def toplevelinstr(self, instruction: str):
+		self.asm = instruction+self.asm
 
 	def generate_expression(self, expr: dict):
 		key: str; node: dict
@@ -70,11 +72,10 @@ class Compiler:
 		dtype = node["type"]
 
 		assert dtype == "int var"
-		
-		start = len(self.allocated_bytes)-1
-		self.allocated_bytes+=[i for i in range(4)]
 
-		self.globals.declare(name, dtype, 4, f"__NOACCESS.mainmem.1+{start}")
+		self.asm.toplevelinstr(f"{name} resb 4")
+
+		self.globals.declare(name, dtype, 4, name)
 
 	def define_variable(self, node: dict):
 		name = node["name"]
@@ -84,10 +85,9 @@ class Compiler:
 
 		assert dtype == "int var"
 
-		start = len(self.allocated_bytes)
-		self.allocated_bytes+=[i for i in range(4)]
+		self.asm.toplevelinstr(f"{name} resb 4")
 
-		self.globals.declare(name, dtype, 4, f"__NOACCESS.mainmem.1+{start}")
+		self.globals.declare(name, dtype, 4, name)
 		memaddr = self.globals.assign(name, value, index)
 
 		self.generate_expression(value)
@@ -126,7 +126,7 @@ class Compiler:
 				self.assign_variable(node)
 
 		if top is self.ast: #add the number of bytes needed to allocate
-			self.asm=f"section .bss\n\t__NOACCESS.mainmem.1 resb {len(self.allocated_bytes)}\n\n"+self.asm
+			self.asm=f"section .bss"+self.asm
 
 		return self.asm
 
