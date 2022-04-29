@@ -6,6 +6,9 @@ from utils import (
 
 class FunctionCompiler:
 	def __init__(self, function: dict, code: str):
+		self.prolog = ""
+		self.epilog = ""
+		self.asm = ""
 		self.function = function
 		self.allocated_bytes
 		self.locals = SymbolTable(code)
@@ -110,9 +113,7 @@ class FunctionCompiler:
 	def traverse(self, top: dict=None):
 		key: str; node: dict
 		
-		top = top if top is not None else self.function
-
-		#make prolog		
+		top = top if top is not None else self.function		
 
 		for key, node in top.items():
 			if key.startswith("Expression"):
@@ -124,9 +125,11 @@ class FunctionCompiler:
 			elif key.startswith("Variable Assignment"):
 				self.assign_variable(node)
 
-		#make epilog
+		#make prolog and epilog
+		self.prolog = f"push ebx\n\tpush esi\n\tsub esp, {self.allocated_bytes+8}"
+		self.prolog = f"add esp, {self.allocated_bytes+8}\n\tpop esi\n\tpop ebx"
 
-		return self.asm
+		return self.prolog+"\n\t"+self.asm+"\n\t"+self.epilog
 
 
 
@@ -148,7 +151,7 @@ class Compiler:
 	def traverse_function(self, node: dict):
 		self.scope = "local"
 		#make prolog
-		self.traverse(node["body"])
+		compiler = FunctionCompiler(node, self.source)
 		#make epilog
 		self.scope = "global"
 
