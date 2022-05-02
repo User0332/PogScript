@@ -26,6 +26,21 @@ class Lexer():
 		for comment in comments:
 			working_code = working_code.replace(comment.group(), " "*len(comment.group()), 1)
 
+		keywds = [
+			["^return\s|\sreturn\s", "RETURN", RE_MULTILINE],
+			["^namespace\s|\snamespace\s", "NAMESPACE", RE_MULTILINE],
+			["^int\s|\sint\s", "INT", RE_MULTILINE],
+			["^char\s|\schar\s", "CHAR", RE_MULTILINE],
+			["^float\s|\sfloat\s", "FLOAT", RE_MULTILINE],
+			["^var\s|\svar\s", "VAR", RE_MULTILINE],
+			["^ptr\s|\sptr\s", "PTR", RE_MULTILINE],
+			["^const\s|\sconst\s", "CONST", RE_MULTILINE],
+			["^func\s|\sfunc\s", "FUNC", RE_MULTILINE],
+			["^is\s|\sis\s", "IDENTITY_COMPARISON", RE_MULTILINE],
+			["^not\s|\snot\s|^or\s|\sor\s|^and\s|\sand\s", "LOGICAL_OP", RE_MULTILINE],
+			["^if\s|\sif\s|^else\s|\selse\s", "CONDITIONAL_KEYWD"]
+		]
+
 		regexes = [
 			['".*?"', "STRING"],
 			["==|>=|<=|>|<", "COMPARISON_OP"],
@@ -33,29 +48,19 @@ class Lexer():
 			["[\d]+\.[\d]+", "FLOAT"],
 			["[\.:,\[\]\(\)}{|]", "SPECIAL"],
 			["\*\*|[/\*\-\+]", "OPERATOR"],
-			["\n", "NEWLINE"]
-			["(^|;| |\t)return['\s]", "RETURN", RE_MULTILINE],
-			["(^|;| |\t)namespace['\s]", "NAMESPACE", RE_MULTILINE],
-			["(^|;| |\t)int['\s]", "INT", RE_MULTILINE],
-			["(^|;| |\t)char['\s]", "CHAR", RE_MULTILINE],
-			["(^|;| |\t)float['\s]", "FLOAT", RE_MULTILINE],
-			["(^|;| |\t)var['\s]", "VAR", RE_MULTILINE],
-			["(^|;| |\t)ptr['\s]", "PTR", RE_MULTILINE],
-			["(^|;| |\t)const['\s]", "CONST", RE_MULTILINE],
-			["(^|;| |\t)func['\s]", "FUNC", RE_MULTILINE],
-			["(^|;| |\t)is['\s]", "IDENTITY_COMPARISON", RE_MULTILINE],
-			["(^|;| |\t)(not|or|and)['\s]", "UNARY_LOGICAL_OP", RE_MULTILINE],
-			["(^|;| |\t)(if|else)['\s]", "CONDITIONAL_KEYWD"],
+			*keywds,
 			["[a-z_]\w*", "IDENTIFIER", RE_IGNORECASE],
-			["\d+", "INTEGER"]
+			["\d+", "INTEGER"],
+			["\n", "NEWLINE"]
 		]
 
 		for regex in regexes:
 			matches = re_finditer(regex[0], working_code, regex[2]) if len(regex) > 2 else re_finditer(regex[0], working_code)
 
 			for match in matches:
+				start = match.start()+1 if regex in keywds else match.start()
 				group = match.group().strip()
-				tokens.append([regex[1], group, match.start()])
+				tokens.append([regex[1], group, start])
 				working_code = working_code.replace(group, " "*len(group), 1)
 
 		unlexed = "".join(working_code.split())
@@ -64,6 +69,5 @@ class Lexer():
 			
 			throw(f"POGCC 019: Unknown token {unlexed[0]}", code)
 
-			
 		return TokenSorter(tokens)
 #

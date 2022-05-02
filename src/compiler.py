@@ -10,7 +10,7 @@ class FunctionCompiler:
 		self.epilog = ""
 		self.asm = ""
 		self.function = function
-		self.allocated_bytes
+		self.allocated_bytes = 0
 		self.locals = SymbolTable(code)
 		self.source = code
 
@@ -18,7 +18,7 @@ class FunctionCompiler:
 		self.asm+="\n\t"+instruction
 
 	def toplevelinstr(self, instruction: str):
-		self.asm = instruction+self.asm
+		self.asm = "\t"+instruction+"\n"+self.asm
 
 	def generate_expression(self, expr: dict):
 		key: str; node: dict
@@ -132,7 +132,6 @@ class FunctionCompiler:
 		return self.prolog+"\n\t"+self.asm+"\n\t"+self.epilog
 
 
-
 #Compiler
 class Compiler:
 	def __init__(self, ast: dict, code: str):
@@ -146,7 +145,7 @@ class Compiler:
 		self.asm+="\n\t"+instruction
 
 	def toplevelinstr(self, instruction: str):
-		self.asm = instruction+self.asm
+		self.asm = "\t"+instruction+"\n"+self.asm
 
 	def traverse_function(self, node: dict):
 		self.scope = "local"
@@ -209,7 +208,7 @@ class Compiler:
 		assert dtype == "int var"
 
 		if self.scope == "global":
-			self.asm.toplevelinstr(f"{name} resb 4")
+			self.toplevelinstr(f"{name} resb 4")
 			self.globals.declare(name, dtype, 4, name)
 
 	def define_variable(self, node: dict):
@@ -221,7 +220,7 @@ class Compiler:
 		assert dtype == "int var"
 
 		if self.scope == "global":
-			self.asm.toplevelinstr(f"{name} resb 4")
+			self.toplevelinstr(f"{name} resb 4")
 			self.globals.declare(name, dtype, 4, name)
 			memaddr = self.globals.assign(name, value, index)
 			self.generate_expression(value)
@@ -259,7 +258,7 @@ class Compiler:
 				self.assign_variable(node)
 
 		if top is self.ast: #add the number of bytes needed to allocate
-			self.asm=f"section .bss"+self.asm
+			self.asm=f"section .bss\n"+self.asm
 
 		return self.asm
 	#

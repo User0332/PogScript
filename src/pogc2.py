@@ -173,7 +173,7 @@ def main():
 		print(tokens)
 		print("\n\n")
 		print("Pretty-print:\n\n\n")
-		print(formatted_list)
+		print(''.join(formatted_list))
 		print(f"Length of tokens: {len(tokens)}\n\n")
 
 	if out.endswith(".lst"):

@@ -1,0 +1,20 @@
+int var foo
+int var bar
+int var baz = 0
+int var pog = 0
+
+if 1+2
+{
+	foo = 1
+	bar = 0
+}
+else
+{
+	foo = 0
+	bar = 1
+}
+
+if foo
+	baz = 1
+else
+	pog = 1

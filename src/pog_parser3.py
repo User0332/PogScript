@@ -1,4 +1,4 @@
-from json import loads
+from json import loads, dumps
 
 from utils import (
 	Token, 
@@ -71,6 +71,15 @@ class VariableAccessNode:
 	def __repr__(self):
 		return f'{{"Variable Reference" : {{ "name" : "{self.name}", "index" : {self.idx} }} }}'
 
+class ConditionalStatementNode:
+	def __init__(self, condition: Node, if_body: dict, else_body: dict):
+		self.condition = condition
+		self.if_body = dumps(if_body, indent=1)
+		self.else_body = dumps(else_body, indent=1)
+
+	def __repr__(self):
+		return f'{{"Conditional Statement" : {{ "condition" : {self.condition}, "if" : {self.if_body}, "else" : {self.else_body} }} }}'
+
 class UnimplementedNode:
 	def __init__(self):
 		pass
@@ -79,7 +88,7 @@ class UnimplementedNode:
 		return '{ "Unimplemented Node" : null }'
 
 class FunctionDefinitionNode:
-	def __init__(self, name: str, args: list[str], body: Node):
+	def __init__(self, name: str, args: list[str], body: dict):
 		self.name = name
 		self.args = args
 		self.body = body
@@ -106,22 +115,22 @@ class Parser3:
 		self.advance()
 
 	#Gets all the expressions in the code 
-	#(which must be split by a <newline> or ';')
+	#(which must be split by a <newline>)
 	#and formats it into JSON to be read
 	#by the compiler class
 	def parse(self):
 		ast = {}
 
-		while True:
+		while 1:
 			expr = str(self.expr())
 
 			if self.current.type not in ("NEWLINE", "EOF"):
 				code = get_code(self.code, self.current.idx)
+
 				throw(f"POGCC 030: Missing end-of-statement token <newline>", code)
 
 			expr = "{}" if expr == "None" else expr
 	
-
 			ast[f"Expression @Idx[{self.idx}]"] = loads(expr)
 
 			if self.current.type == "EOF":
@@ -139,6 +148,33 @@ class Parser3:
 		self.idx-=2
 		self.advance()
 
+	#gets blocks of code in between curly braces
+	def get_body(self):
+		body = {}
+		while self.current.value != "}":
+			expr = str(self.expr())
+
+			expr = "{}" if expr == "None" else expr
+
+			body[f"Expression @Idx[{self.idx}]"] = loads(expr)
+
+			if self.current.type not in ("NEWLINE", "}"):
+				code = get_code(self.code, self.current.idx)
+
+				throw(f"POGCC 030: Missing end-of-statement token <newline>", code)
+
+			elif self.current.type == "EOF":
+				code = get_code(self.code, self.current.idx)
+
+				throw("POGCC 018: Unexpected EOF, Expected '}'", code)
+				break
+
+			self.advance()
+
+		self.advance()
+
+		return body
+
 	# Power (**) operator
 	def power(self):
 		return self.bin_op(self.atom, ("**", ), self.factor)
@@ -147,7 +183,7 @@ class Parser3:
 	def factor(self):
 		current = self.current
 
-		if current.value in ("-"):
+		if current.value == "-":
 			self.advance()
 			fac = self.factor()
 			if fac is None:
@@ -209,8 +245,12 @@ class Parser3:
 				code = get_code(self.code, self.current.idx)
 				
 				throw("POGCC 018: Expected ')'", code)
+				
+				self.advance()
 				return UnimplementedNode()
-
+		elif current.value == "if":
+			self.advance()
+			return self.conditional_expr()
 		
 
 		code = get_code(self.code, self.current.idx)
@@ -220,15 +260,62 @@ class Parser3:
 		return UnimplementedNode()
 
 	#Grammar Expressions
+	def conditional_expr(self):
+		condition = self.expr()
+
+		if condition is None:
+			code = get_code(self.code, self.current.idx)
+
+			throw("POGCC 018: Expected expression", code)
+
+		while self.current.type == "NEWLINE":
+			self.advance()
+
+		if self.current.value == "{":
+			self.advance()
+			if_body = self.get_body()
+		else:
+			if_nodes = self.expr()
+			if_body = {f"Expression @Idx[{self.idx}]" : loads(str(if_nodes))}
+			if if_nodes is None:
+				code = get_code(self.code, self.current.idx)
+
+				throw("POGCC 018: Expected expression", code)
+
+		while self.current.type == "NEWLINE":
+			self.advance()
+			
+		if self.current.value == "else":
+			self.advance()
+
+			while self.current.type == "NEWLINE":
+				self.advance()
+
+			if self.current.value == "{":
+				self.advance()
+				else_body = self.get_body()
+			else:
+				else_nodes = self.expr()
+				else_body = {f"Expression @Idx[{self.idx}]" : loads(str(else_nodes))}
+				if else_nodes is None:
+					code = get_code(self.code, self.current.idx)
+
+					throw("POGCC 018: Expected expression", code)
+		else:
+			else_body = {}
+		
+		return ConditionalStatementNode(condition, if_body, else_body)
+			
+
 	def comp_expr(self):
-		if self.current.type == "NOT":
+		if self.current.value == "not":
 			op = self.current
 			self.advance()
 
 			node = self.comp_expr()
 			return UnaryOpNode(op, node)
 
-		return self.bin_op(self.num_expr, ("==", "!=", "<", ">", "<=", ">="))
+		return self.bin_op(self.num_expr, ("==", "!=", "<", ">", "<=", ">=", "and", "or"))
 		
 
 	def num_expr(self):
@@ -238,7 +325,7 @@ class Parser3:
 		if self.current.type in ("INT", "FLOAT", "CHAR"):
 			vartype = self.current.value
 			self.advance()
-			if self.current.type in ("VAR", "PTR"):
+			if self.current.type in ("VAR", "PTR", "CONST", "FUNC"):
 				vartype+=' '+self.current.value
 				self.advance()
 				if self.current.type != "IDENTIFIER":
@@ -255,7 +342,6 @@ class Parser3:
 				self.advance()
 
 				if self.current.type == "NEWLINE":
-					self.advance()
 					return VariableDeclarationNode(f"{vartype}", name)
 
 				elif self.current.value == "=":
@@ -266,7 +352,7 @@ class Parser3:
 
 						code = get_code(self.code, self.current.idx)
 						
-						throw("POGCC 018: Expected value after assignment operator '='", code)
+						throw("POGCC 018: Expected expression after assignment operator '='", code)
 						
 						self.advance()
 						return UnimplementedNode()
@@ -275,13 +361,22 @@ class Parser3:
 				else:
 					code = get_code(self.code, self.current.idx)
 					
-					throw(f"POGCC 018: Expecting '=' or {self.end_statement}", code)
+					throw(f"POGCC 018: Expected '=' or <newline>", code)
+					
+					self.advance()
 					return UnimplementedNode()
+			else:
+				code = get_code(self.code, self.current.idx)
+				
+				throw("POGCC 018: Expected 'var', 'ptr', 'const', or 'function'", code)
+				
+				self.advance()
+				return UnimplementedNode()
 
 		elif self.current.type == "IDENTIFIER":
 			name = self.current.value
 			self.advance()
-			if self.current.type == "=":
+			if self.current.value == "=":
 				self.advance()
 				expr = self.expr()
 				if expr is None:
@@ -289,7 +384,7 @@ class Parser3:
 
 					code = get_code(self.code, self.current.idx)
 					
-					throw("POGCC 018: Expected value after assignment operator '='", code)
+					throw("POGCC 018: Expected expression after assignment operator '='", code)
 					
 					self.advance()
 					return UnimplementedNode()
@@ -297,6 +392,9 @@ class Parser3:
 					return VariableAssignmentNode(name, expr, self.current.idx)
 			else:
 				self.decrement() #move index pointer back to the identifier
+
+		elif self.current.type == "NEWLINE":
+			return None
 
 		return self.bin_op(self.comp_expr, ('and', 'or'))
 	#

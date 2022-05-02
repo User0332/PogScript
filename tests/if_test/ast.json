@@ -1,0 +1,124 @@
+{
+ "Expression @Idx[3]": {
+  "Variable Declaration": {
+   "type": "int var",
+   "name": "foo"
+  }
+ },
+ "Expression @Idx[7]": {
+  "Variable Declaration": {
+   "type": "int var",
+   "name": "bar"
+  }
+ },
+ "Expression @Idx[13]": {
+  "Variable Definition": {
+   "type": "int var",
+   "name": "baz",
+   "value": {
+    "Numerical Constant": 0
+   },
+   "index": 39
+  }
+ },
+ "Expression @Idx[19]": {
+  "Variable Definition": {
+   "type": "int var",
+   "name": "pog",
+   "value": {
+    "Numerical Constant": 0
+   },
+   "index": 55
+  }
+ },
+ "Expression @Idx[20]": {},
+ "Expression @Idx[51]": {
+  "Conditional Statement": {
+   "condition": {
+    "Binary Operation +": [
+     {
+      "Numerical Constant": 1
+     },
+     {
+      "Numerical Constant": 2
+     }
+    ]
+   },
+   "if": {
+    "Expression @Idx[27]": {},
+    "Expression @Idx[31]": {
+     "Variable Assignment": {
+      "name": "foo",
+      "value": {
+       "Numerical Constant": 1
+      },
+      "index": 74
+     }
+    },
+    "Expression @Idx[35]": {
+     "Variable Assignment": {
+      "name": "bar",
+      "value": {
+       "Numerical Constant": 0
+      },
+      "index": 83
+     }
+    }
+   },
+   "else": {
+    "Expression @Idx[41]": {},
+    "Expression @Idx[45]": {
+     "Variable Assignment": {
+      "name": "foo",
+      "value": {
+       "Numerical Constant": 0
+      },
+      "index": 101
+     }
+    },
+    "Expression @Idx[49]": {
+     "Variable Assignment": {
+      "name": "bar",
+      "value": {
+       "Numerical Constant": 1
+      },
+      "index": 110
+     }
+    }
+   }
+  }
+ },
+ "Expression @Idx[52]": {},
+ "Expression @Idx[65]": {
+  "Conditional Statement": {
+   "condition": {
+    "Variable Reference": {
+     "name": "foo",
+     "index": 117
+    }
+   },
+   "if": {
+    "Expression @Idx[59]": {
+     "Variable Assignment": {
+      "name": "baz",
+      "value": {
+       "Numerical Constant": 1
+      },
+      "index": 129
+     }
+    }
+   },
+   "else": {
+    "Expression @Idx[65]": {
+     "Variable Assignment": {
+      "name": "pog",
+      "value": {
+       "Numerical Constant": 1
+      },
+      "index": 143
+     }
+    }
+   }
+  }
+ }
+}

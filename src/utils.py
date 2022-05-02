@@ -124,14 +124,11 @@ class TokenSorter:
 		return self.tokens.__next__()
 
 	def sort(self):
-		positions = {
-			}
+		positions = {}
 		tokens = []
 	
-
 		for token in self.tokens:
-				positions[token[2]] = [token[0], token[1], token[2]-1]
-
+				positions[token[2]] = [token[0], token[1], token[2]]
 
 		token_positions = sorted(positions)
 
@@ -189,5 +186,18 @@ class SymbolTable:
 		return self.symbols[name]['address']
 
 	def delete(self, name):
-		del self.symbols['name']
+		del self.symbols[name]
+
+class TypeTable:
+	def __init__(self):
+		self.symbols: dict = {}
+
+	def add(self, name, dtype):
+		self.symbols[name] = dtype
+
+	def get(self, name):
+		return self.symbols.get(name, None)
+
+	def remove(self, name):
+		self.symbols.pop(name, None)
 #
