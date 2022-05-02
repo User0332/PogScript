@@ -1,0 +1,57 @@
+# POGC2 IMPLEMENTATION <builtin/types.pog>
+# This builtin file in PogScript contains 1 byte constants and a gettype()
+# function. The constants here are for primitive types and contain 
+# no useful data. The sole purpose of <builtin/types.pog> is to 
+# provide a sole memory address for checking the type of a primitive. 
+# This allows programs to check the type of a primitive at runtime 
+# because the type of a primitive is set to the empty constant 
+# defined in this file. This file's compiled version should be found 
+# in <builtin/types.lib>. The constants are marked as non-overridable 
+# so that the user does not accidentally create a new memory address 
+# for a primitive type. The types in this file are included in the 
+# assembly output by use of `extern PogScript.<TypeName>`. Each type 
+# is reserved one byte to reduce memory usage. You can check the type
+# of a variable using the `is` operator. For example, checking if a 
+# variable was an `int` could look like: `gettype(var) is Int32`.
+
+# THIS FILE SHOULD CONTAIN THE FOLLOWING CONSTANTS:
+# PogScript.Int16
+# PogScript.Int32
+# PogScript.UInt16
+# PogScript.UInt32
+# PogScript.Char (UInt32)
+# PogScript.Float32
+# PogScript.Int16Pointer
+# PogScript.Int32Pointer
+# PogScript.UInt16Pointer
+# PogScript.UInt32Pointer
+# PogScript.CharPointer
+# PogScript.Float32Pointer
+
+# THIS FILE SHOULD CONTAIN THE FOLLOWING FUNCTIONS:
+# PogScript.gettype()
+
+
+namespace PogScript
+{
+    nonoverrideable byte const Int16 = 0
+    nonoverrideable byte const Int32 = 0
+    nonoverrideable byte const UInt16 = 0
+    nonoverrideable byte const UInt32 = 0
+    nonoverrideable byte const Char = 0
+    nonoverrideable byte const Float32 = 0
+    nonoverrideable byte const Int16Pointer = 0
+    nonoverrideable byte const Int32Pointer = 0
+    nonoverrideable byte const UInt16Pointer = 0
+    nonoverrideable byte const UInt32Pointer = 0
+    nonoverrideable byte const CharPointer = 0
+    nonoverrideable byte const Float32Pointer = 0
+
+    any ptr gettype(any var object)
+    {
+        bareaccess
+        {
+            return *object
+        }
+    }
+}
