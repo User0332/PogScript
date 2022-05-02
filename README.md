@@ -16,7 +16,7 @@ To view command line options, type ```pogc2 -h```
 
 <br/>
 
-A sample program (for the *latest binary*) can look like this:
+A sample program for the latest compiler can look like this:
 
 >main.pog
 
@@ -26,17 +26,6 @@ int bar = 234*foo
 ```
 
 <br/>
-
-A sample program (for the *untested source*) can look like this:
-(to create a new project for the current source, you can type ```pogscript new <project_name>``` which will automatically set up a directory and configurations)
-
->main.pog
-
-```c
-int var foo = 838*38
-int var bar = 234*foo
-```
-
 <br/>
 
 NOTE: Information for writing programs can be found in [docs/guides/progamming/](https://github.com/User0332/PogScript/tree/master/docs/guides/programming)
@@ -50,9 +39,7 @@ Compile it with:
 pogc2 main.pog -o <outfile> -d <tokens|ast|dis>
 ```
 
-<br/>
-
-NOTE: If you are using the source you can also use:
+or
 
 ```console
 pogscript compile main.pog -o <outfile> -d <tokens|ast|dis>
