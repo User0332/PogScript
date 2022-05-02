@@ -21,8 +21,8 @@ A sample program for the latest compiler can look like this:
 >main.pog
 
 ```c
-int foo = 838*38
-int bar = 234*foo
+int var foo = 838*38
+int var bar = 234*foo
 ```
 
 <br/>
