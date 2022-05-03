@@ -1,0 +1,148 @@
+# POGC2 IMPLEMENTATION <builtin/string.pog>
+# This file contains builtin functions for working with strings.
+# Ths file contains functions similar to the functions defined
+# in <string.h>, but with a PogScript-like style. This file
+# uses functions like sprintf but using the `any` type.
+# This allows programmers to format arguments into a string without
+# worrying about the type or format specifier that they need to 
+# pass in to the string formatting function. It also provides a
+# string class for PogScript string types. This file also provides
+# a getstr() function, which returns a C string from a char ptr
+# or String datatype
+
+# THIS FILE SHOULD CONTAIN THE FOLLOWING TYPES:
+# PogScript.String(char ptr)
+#	.changeto(char ptr)
+#	.concat(char ptr)
+
+# THIS FILE SHOULD CONTAIN THE FOLLOWING FUNCTIONS:
+# PogScript.String.format(char ptr, *args)
+# PogScript.String.getstr(any str)
+
+extern cdecl void ptr func malloc(int var size)
+extern cdecl int func strlen(char ptr str)
+extern cdecl void func free(void ptr pointer)
+extern cdecl void func realloc(void ptr pointer, int var size)
+extern cdecl char ptr func strncpy(char ptr dest, char ptr src, int var size)
+extern cdecl char ptr func strncat(char ptr dest, char ptr src, int var size)
+
+namespace PogScript
+{
+	class String
+	{
+		char ptr cstring
+
+		void func __init__(String var self, any var _str)
+		{
+			char ptr str = PogScript.String.getstr(_str)
+			int var size = strlen(str)
+			self.cstring = malloc(size)
+			strncpy(self.cstring, str, size)
+		}
+
+		void func changeto(String var self, any var _newstr)
+		{
+			char ptr newstr = PogScript.String.getstr(_newstr)
+			int var size = strlen(newstr)
+			free(self.cstring)
+			self.cstring = malloc(size)
+			strncpy(self.cstring, newstr, size)
+		}
+
+		void func concat(String var self, any var _addstr)
+		{
+			char ptr addstr = PogScript.String.getstr(_newstr)
+			int var size = strlen(newstr)+strlen(self.cstring)
+			self.cstring = realloc(size)
+			strncat(self.cstring, addstr, size)
+		}
+
+		char ptr func getstr(any var str)
+		{
+			any var type = PogScript.gettype(str)
+
+			if type is PogScript.String
+			{
+				str = self.cstring
+			}
+			elif type is PogScript.CharPointer
+			{
+				str = self
+			}
+			else
+			{
+				PogScript.exception("Non-string passed as a string argument")
+			}
+		}
+
+		String format(any var self, *args)
+		{
+			int var i
+			int var waiting_for_fmt
+			int var argidx
+			any var arg
+			char var c
+			char ptr str = PogScript.String.getstr(self)
+			char ptr numres = malloc(10)
+			String var res = ""
+
+			for (i=0, fmt[i] != '\0', i+=1)
+			{
+				c = fmt[i]
+				if c == '{'
+				{
+					if waiting_for_fmt
+						waiting_for_fmt = 0
+					else
+						waiting_for_fmt = 1
+				}
+				elif waiting_for_fmt and (c == '}')
+				{
+					arg = args[argidx]
+					type = PogScript.gettype(arg)
+
+					if type is PogScript.Int32 or type is PogScript.Int16
+					{
+						sprintf(numres, "%d", arg)
+
+						res.concat(numres)
+					}
+					elif type is PogScript.Float32
+					{
+						sprintf(numres, "%f", arg)
+						
+						res.concat(numres)
+					}
+					elif type is PogScript.Char
+					{
+						res.concat(&arg)
+					}
+					elif type is PogScript.CharPointer
+					{
+						res.concat(arg)
+					}
+					elif type is PogScript.String
+					{
+						res.concat(arg.cstring)
+					}
+					elif (type is PogScript.Int16Pointer) or (type is PogScript.Int32Pointer) or (type is PogScript.UInt16Pointer) or (type is PogScript.UInt32Pointer) or (type is PogScript.Float32Pointer) or (type is PogScript.Address32)
+					{
+						sprintf(numres, "%p", arg)
+						
+						res.concat(numres)
+					}
+				} 
+				elif waiting_for_fmt #if no close brace encountered, return -1
+				{
+					return -1
+				}
+				else
+				{
+					res.concat(c)
+				}
+			}
+
+			return res
+		}
+	}
+}

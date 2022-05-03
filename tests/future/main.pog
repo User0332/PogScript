@@ -1,0 +1,15 @@
+using namespace PogScript
+using namespace PogScript.IO
+using namespace PogScript.Conversion
+
+int func main(int var argc, char ptr argv)
+{
+	String num = "42"
+	int var num_as_int = toint(num)
+
+	println("Hello World!")
+	printf("Number printed using printf(): {}", num_as_int)
+
+
+	return 0
+}

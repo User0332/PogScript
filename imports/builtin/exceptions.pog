@@ -19,8 +19,9 @@ extern cdecl void func exit(int var status)
 
 namespace PogScript
 {
-    void func exception(char ptr str)
+    void func exception(any var _str)
     {
+        char ptr str = PogScript.String.getstr(_str)
         PogScript.IO.fprintf(stderr, "{}", str)
         exit(1)
     }
