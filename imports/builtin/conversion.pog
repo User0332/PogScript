@@ -1,0 +1,64 @@
+# POGC2 IMPLEMENTATION <builtin/conversion.pog>
+# This file should contain functions for converting 
+# between datatypes. This includes use of conversion
+# functions defined in <stdlib.h>, but with ease of use
+# from the 'any' type. Instead of exporting functions like
+# atoi and strtoi, this file will export a generic toint() function
+# that will attempt to generate an integer from any given object.
+
+# THIS FILE SHOULD CONTAIN THE FOLLOWING FUNCTIONS:
+# PogScript.Conversion.toint(any var)
+# PogScript.Conversion.tostr(any var)
+# PogScript.Conversion.tofloat(any var)
+
+extern cdecl int func ceil(float var x)
+extern cdecl int func floor(float var x) #use ints and floats because doubles aren't implemented yet
+extern cdecl int func strtoi(char ptr str)
+
+namespace PogScript.Conversion
+{
+	int func toint(any var object)
+	{
+		byte var type = PogScript.gettype(object)
+		int var res
+
+		if (type is PogScript.Int16) or (type is PogScript.Int32)
+		{
+			res = object   
+		}
+		else if type is PogScript.UInt16
+		{
+			res = object
+			res -= 2**16
+
+		}
+		else if type is PogScript.Float32
+		{
+			if floor(object) < 0
+			{
+				res = ceil(object)
+			}
+			else
+			{
+				res = floor(object)
+			}
+
+		}
+		else if type is PogScript.CharPointer
+		{
+			char ptr endptr
+			res = strtoi(object, endptr, 10)
+
+			if *endptr != '\0'
+			{
+				PogScript.exception("String passed to toint() cannot be converted to int.")
+			}
+		}
+		else
+		{
+			PogScript.exception("Invalid object passed to toint().")
+		}
+
+		return res
+	}
+}

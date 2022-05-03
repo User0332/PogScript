@@ -27,31 +27,33 @@
 # PogScript.UInt32Pointer
 # PogScript.CharPointer
 # PogScript.Float32Pointer
+# PogScript.Address32
 
 # THIS FILE SHOULD CONTAIN THE FOLLOWING FUNCTIONS:
-# PogScript.gettype()
+# PogScript.gettype(any var)
 
 
 namespace PogScript
 {
-    nonoverrideable byte const Int16 = 0
-    nonoverrideable byte const Int32 = 0
-    nonoverrideable byte const UInt16 = 0
-    nonoverrideable byte const UInt32 = 0
-    nonoverrideable byte const Char = 0
-    nonoverrideable byte const Float32 = 0
-    nonoverrideable byte const Int16Pointer = 0
-    nonoverrideable byte const Int32Pointer = 0
-    nonoverrideable byte const UInt16Pointer = 0
-    nonoverrideable byte const UInt32Pointer = 0
-    nonoverrideable byte const CharPointer = 0
-    nonoverrideable byte const Float32Pointer = 0
+	nonoverrideable byte const Int16 = 0
+	nonoverrideable byte const Int32 = 0
+	nonoverrideable byte const UInt16 = 0
+	nonoverrideable byte const UInt32 = 0
+	nonoverrideable byte const Char = 0
+	nonoverrideable byte const Float32 = 0
+	nonoverrideable byte const Int16Pointer = 0
+	nonoverrideable byte const Int32Pointer = 0
+	nonoverrideable byte const UInt16Pointer = 0
+	nonoverrideable byte const UInt32Pointer = 0
+	nonoverrideable byte const CharPointer = 0
+	nonoverrideable byte const Float32Pointer = 0
+	nonoverrideable byte const Address32 = 0
 
-    any ptr gettype(any var object)
-    {
-        bareaccess
-        {
-            return *object
-        }
-    }
+	byte var gettype(any var object)
+	{
+		bareaccess
+		{
+			return *(*object)
+		}
+	}
 }

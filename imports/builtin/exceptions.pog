@@ -1,0 +1,27 @@
+# POGC2 IMPLEMENTATION <builtin/exceptions.pog>
+# This file contains the exception() function which is used
+# to throw exceptions while the code is running. Exception
+# handling will aslo be introduced in the future, and the 
+# exception() function will jump to the exception handler, which
+# would be part of the PogScript runtime. The exception() function
+# takes in a string, which it passes to the exception handler.
+# The exception handler will then determine whether or not
+# the exception should be thrown. The current implementation,
+# without an exception handler, just prints the string to stderr
+# and exits with a code of 1.
+
+# THIS FILE SHOULD CONTAIN THE FOLLOWING FUNCTIONS:
+# PogScript.exception(char ptr)
+
+extern cstruct IO_FILE
+extern IO_FILE var stderr
+extern cdecl void func exit(int var status)
+
+namespace PogScript
+{
+    void func exception(char ptr str)
+    {
+        PogScript.IO.fprintf(stderr, "{}", str)
+        exit(1)
+    }
+}

@@ -1,0 +1,114 @@
+# POGC2 IMPLEMENTATION <builtin/pogio.pog>
+# This file can be used to call C functions like printf, but with
+# a PogScript-like style. This means you can pass formats
+# like '{}' instead of '%i' to printf and the type of the
+# argument will be inferred using the constants from <builtin/types.pog>.
+# This file also defines some new functions like print and println,
+# which take any object and attempt to write it to stdout.
+
+# THIS FILE SHOULD CONTAIN THE FOLLOWING FUNCTIONS:
+# PogScript.IO.fprintf(IO_FILE stream, char ptr, *args)
+# PogScript.IO.printf(char ptr, *args)
+# PogScript.IO.print(any var)
+# PogScript.IO.println(any var)
+
+extern cstruct IO_FILE
+extern IO_FILE ptr stdout
+extern cdecl int func fputc(char var arg, IO_FILE ptr stream)
+extern cdecl int func sprintf(char ptr str, char ptr format, *args)
+
+namespace PogScript.IO
+{
+	void func fprintf(IO_FILE ptr stream, char ptr fmt, *args) # NOTE: update to include more types
+	{
+		int var i
+		int var j
+		char var c
+		any var arg
+		byte ptr type
+		char ptr numres = malloc(10)
+		int var waiting_for_fmt = 0
+		int var argidx = 0
+		
+
+		for (i=0, fmt[i] != '\0', i+=1)
+		{
+			c = fmt[i]
+			if c == '{'
+			{
+				if waiting_for_fmt
+					waiting_for_fmt = 0
+				else
+					waiting_for_fmt = 1
+			}
+			elif waiting_for_fmt and (c == '}')
+			{
+				arg = args[argidx]
+				type = PogScript.gettype(arg)
+
+				if type is PogScript.Int32 or type is PogScript.Int16
+				{
+					sprintf(numres, "%d", arg)
+
+					for j=0, numres[j] != '\0', j+=1
+					{
+						fputc(numres[j], stream)
+					}
+				}
+				else if type is PogScript.Float32
+				{
+					sprintf(numres, "%f", arg)
+					
+					for j=0, numres[j] != '\0', j+=1
+					{
+						fputc(numres[j], stream)
+					}
+				}
+				else if type is PogScript.Char
+				{
+					fputc(c, stream)
+				}
+				else if type is PogScript.CharPointer
+				{
+					for j=0, arg[j] != '\0', j+=1
+					{
+						fputc(arg[j], stream)
+					}
+				}
+				else if (type is PogScript.Int16Pointer) or (type is PogScript.Int32Pointer) or (type is PogScript.UInt16Pointer) or (type is PogScript.UInt32Pointer) or (type is PogScript.Float32Pointer) or (type is PogScript.Address32)
+				{
+					sprintf(numres, "%p", arg)
+					
+					for j=0, numres[j] != '\0', j+=1
+					{
+						fputc(numres[j], stream)
+					}
+				}
+			} 
+			elif waiting_for_fmt #if no close brace encountered, return -1
+			{
+				return -1
+			}
+			else
+			{
+				fputc(c, stream)
+			}
+		}
+	}
+
+	void func printf(char ptr fmt, *args)
+	{
+		fprintf(stdout, fmt, *args)
+	}
+
+	void func print(any var object)
+	{
+		PogScript.IO.printf("{}", object)
+	}
+	
+	void func println(any var object)
+	{
+		PogScript.IO.printf("{}", object)
+		putc("\n")
+	}
+}
