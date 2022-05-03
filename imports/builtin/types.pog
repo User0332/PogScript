@@ -49,7 +49,7 @@ namespace PogScript
 	nonoverrideable byte const Float32Pointer = 0
 	nonoverrideable byte const Address32 = 0
 
-	byte var gettype(any var object)
+	byte func gettype(any var object)
 	{
 		bareaccess
 		{
