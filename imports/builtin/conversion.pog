@@ -12,7 +12,7 @@
 # PogScript.Conversion.tofloat(any var)
 
 extern cdecl int func ceil(float var x)
-extern cdecl int func floor(float var x) #use ints and floats because doubles aren't implemented yet
+extern cdecl int func floor(float var x) #use ints and floats because doubles are not implemented yet
 extern cdecl int func strtoi(char ptr str)
 
 namespace PogScript.Conversion
@@ -26,13 +26,13 @@ namespace PogScript.Conversion
 		{
 			res = object   
 		}
-		else if type is PogScript.UInt16
+		elif type is PogScript.UInt16
 		{
 			res = object
 			res -= 2**16
 
 		}
-		else if type is PogScript.Float32
+		elif type is PogScript.Float32
 		{
 			if floor(object) < 0
 			{
@@ -44,7 +44,7 @@ namespace PogScript.Conversion
 			}
 
 		}
-		else if type is PogScript.CharPointer
+		elif type is PogScript.CharPointer
 		{
 			char ptr endptr
 			res = strtoi(object, endptr, 10)
@@ -54,7 +54,7 @@ namespace PogScript.Conversion
 				PogScript.exception("String passed to toint() cannot be converted to int.")
 			}
 		}
-		else if type is PogScript.String
+		elif type is PogScript.String
 		{
 			char ptr endptr
 			res = strtoi(object.cstring, endptr, 10)

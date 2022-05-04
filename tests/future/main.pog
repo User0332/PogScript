@@ -4,7 +4,7 @@ using namespace PogScript.Conversion
 
 int func main(int var argc, char ptr argv)
 {
-	String num = "42"
+	String var num = "42"
 	int var num_as_int = toint(num)
 
 	println("Hello World!")
