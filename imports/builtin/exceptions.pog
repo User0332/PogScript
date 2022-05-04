@@ -1,7 +1,7 @@
 # POGC2 IMPLEMENTATION <builtin/exceptions.pog>
 # This file contains the exception() function which is used
 # to throw exceptions while the code is running. Exception
-# handling will aslo be introduced in the future, and the 
+# handling will also be introduced in the future, and the 
 # exception() function will jump to the exception handler, which
 # would be part of the PogScript runtime. The exception() function
 # takes in a string, which it passes to the exception handler.
