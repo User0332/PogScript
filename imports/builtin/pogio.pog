@@ -19,9 +19,8 @@ extern cdecl int func sprintf(char ptr str, char ptr format, *args)
 
 namespace PogScript.IO
 {
-	void func fputs(any var _str, IOFILE ptr stream)
+	void func fputs(char ptr str, IOFILE ptr stream)
 	{
-		char ptr str = PogScript.String.getstr(_str)
 		int var i
 
 		for i=0, str[i] != '\0', i+=1
@@ -30,17 +29,17 @@ namespace PogScript.IO
 		}
 	}
 
-	void func puts(any var str)
+	void func puts(char ptr str)
 	{
 		fputs(str, stdout)
 	}
 
-	void func fprintf(IO_FILE ptr stream, any var fmt, *args) # NOTE: update to include more types
+	void func fprintf(IO_FILE ptr stream, char ptr fmt, *args)
 	{
 		fputs(PogScript.String.format(fmt, args), stream)
 	}
 
-	void func printf(any var fmt, *args)
+	void func printf(char ptr fmt, *args)
 	{
 		fprintf(stdout, fmt, *args)
 	}
@@ -53,6 +52,6 @@ namespace PogScript.IO
 	void func println(any var object)
 	{
 		PogScript.IO.printf("{}", object)
-		fputc("\n", stdout)
+		fputc('\n', stdout)
 	}
 }

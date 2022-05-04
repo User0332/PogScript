@@ -54,16 +54,6 @@ namespace PogScript.Conversion
 				PogScript.exception("String passed to toint() cannot be converted to int.")
 			}
 		}
-		elif type is PogScript.String
-		{
-			char ptr endptr
-			res = strtoi(object.cstring, endptr, 10)
-
-			if *endptr != '\0'
-			{
-				PogScript.exception("String passed to toint() cannot be converted to int.")
-			}
-		}
 		else
 		{
 			PogScript.exception("Invalid object passed to toint().")
