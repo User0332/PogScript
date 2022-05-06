@@ -1,0 +1,33 @@
+# POGC2 IMPLEMENTATION <builtin/exception.pog>
+# This file contains an exception() function which can be 
+# used to simulate exceptions, rather than having to signify 
+# function errors through a return code or use of an extra pointer
+# argument. The exception() function just moves its string argument 
+# into the eax register and then jumps to the 'catch' block to by the 
+# pointer PogScript.__TRY_CATCH_PTR. The PogScript.__TRY_CATCH_PTR 
+# pointer is handled by the compiler and changed when a new 'try' block 
+# is entered or when a try block is exited. All PogScript.__TRY_CATCH_PTR
+# does is store the memory address of a 'catch' block. A user modifying
+# PogScript.__TRY_CATCH_PTR could result in undefined behavior.
+
+# THIS FILE SHOULD CONTAIN THE FOLLOWING FUNCTIONS:
+# PogScript.exception(char ptr)
+
+
+
+namespace PogScript
+{
+	void ptr __TRY_CATCH_PTR
+
+	void func exception(char ptr err)
+	{
+		__asm 
+		{
+			add esp, 16 #or 8 bytes -- need to check
+			push ebx
+			push esi
+			mov eax, {err}
+			jmp [PogScript.__TRY_CATCH_PTR]
+		}
+	}
+}

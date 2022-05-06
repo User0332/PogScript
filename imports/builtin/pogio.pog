@@ -19,7 +19,7 @@ extern cdecl int func sprintf(char ptr str, char ptr format, *args)
 
 namespace PogScript.IO
 {
-	void func fputs(char ptr str, IOFILE ptr stream)
+	void func fputs(char ptr str, IO_FILE ptr stream)
 	{
 		int var i
 
