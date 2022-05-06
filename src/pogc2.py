@@ -1,8 +1,9 @@
 #LOCAL MODULES
 from lexer import Lexer
 from pog_parser3 import Parser3
-from compiler import Compiler
+from typechecker import TypeChecker
 from ast_preprocessor import SyntaxTreePreproccesor
+from compiler import Compiler
 from optimizer import AssemblyOptimizer
 
 from utils import (
@@ -184,6 +185,8 @@ def main():
 	parser = Parser3(tokens.tokens, code)
 
 	raw_ast = parser.parse()
+
+	TypeChecker(raw_ast, code).traverse()
 
 	if compile_optimizations >= 1:
 		simplifier = SyntaxTreePreproccesor(raw_ast)
