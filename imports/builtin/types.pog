@@ -5,14 +5,10 @@
 # provide a sole memory address for checking the type of a primitive. 
 # This allows programs to check the type of a primitive at runtime 
 # because the type of a primitive is set to the empty constant 
-# defined in this file. This file's compiled version should be found 
-# in <builtin/types.lib>. The constants are marked as non-overridable 
-# so that the user does not accidentally create a new memory address 
-# for a primitive type. The types in this file are included in the 
-# assembly output by use of `extern PogScript.<TypeName>`. Each type 
-# is reserved one byte to reduce memory usage. You can check the type
-# of a variable using the `is` operator. For example, checking if a 
-# variable was an `int` could look like: `gettype(var) is Int32`.
+# defined in this file. Each type is reserved one byte to reduce memory 
+# usage. You can check the type of a variable using the `is` operator.
+# For example, checking if a variable was an `int` could look like: 
+# `gettype(var) is Int32`.
 
 # THIS FILE SHOULD CONTAIN THE FOLLOWING CONSTANTS:
 # PogScript.Int16
@@ -35,19 +31,19 @@
 
 namespace PogScript
 {
-	nonoverrideable byte const Int16 = 0
-	nonoverrideable byte const Int32 = 0
-	nonoverrideable byte const UInt16 = 0
-	nonoverrideable byte const UInt32 = 0
-	nonoverrideable byte const Char = 0
-	nonoverrideable byte const Float32 = 0
-	nonoverrideable byte const Int16Pointer = 0
-	nonoverrideable byte const Int32Pointer = 0
-	nonoverrideable byte const UInt16Pointer = 0
-	nonoverrideable byte const UInt32Pointer = 0
-	nonoverrideable byte const CharPointer = 0
-	nonoverrideable byte const Float32Pointer = 0
-	nonoverrideable byte const Address32 = 0
+	byte const Int16 = 0
+	byte const Int32 = 0
+	byte const UInt16 = 0
+	byte const UInt32 = 0
+	byte const Char = 0
+	byte const Float32 = 0
+	byte const Int16Pointer = 0
+	byte const Int32Pointer = 0
+	byte const UInt16Pointer = 0
+	byte const UInt32Pointer = 0
+	byte const CharPointer = 0
+	byte const Float32Pointer = 0
+	byte const Address32 = 0
 
 	byte func gettype(any var object)
 	{
