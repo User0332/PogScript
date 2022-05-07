@@ -23,10 +23,10 @@ namespace PogScript
 	{
 		__asm 
 		{
+			mov eax, {err}
 			add esp, 16 #or 8 bytes -- need to check
 			push ebx
 			push esi
-			mov eax, {err}
 			jmp [PogScript.__TRY_CATCH_PTR]
 		}
 	}
