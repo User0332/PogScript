@@ -47,4 +47,4 @@ class AssemblyOptimizer:
 				self.optimized+=line+"\n"
 
 
-		return self.asm
+		return self.optimized
