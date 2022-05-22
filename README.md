@@ -28,7 +28,7 @@ int var bar = 234*foo
 <br/>
 <br/>
 
-NOTE: Information for writing programs can be found in [docs/guides/progamming/](https://github.com/User0332/PogScript/tree/master/docs/guides/programming)
+NOTE: Information for writing programs can be found at [https://User0332.github.io/PogScript/docs](https://User0332.github.io/PogScript/docs)
 
 <br/>
 <br/>
@@ -51,4 +51,4 @@ where `outfile`, the argument for -o (--out), can be a file ending with .lst (to
 
 <br/>
 
-For more information, you can visit the [guides](https://github.com/User0332/PogScript/tree/master/docs/guides/) section of this repository.
+For more information, you can visit the [docs](https://User0332.github.io/PogScript/docs) section of my Github Pages site.
