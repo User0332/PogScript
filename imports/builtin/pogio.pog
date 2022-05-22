@@ -7,19 +7,18 @@
 # which take any object and attempt to write it to stdout.
 
 # THIS FILE SHOULD CONTAIN THE FOLLOWING FUNCTIONS:
-# PogScript.IO.fprintf(IO_FILE stream, char ptr, *args)
+# PogScript.IO.fprintf(void ptr stream, char ptr, *args)
 # PogScript.IO.printf(char ptr, *args)
 # PogScript.IO.print(any var)
 # PogScript.IO.println(any var)
 
-extern cstruct IO_FILE
-extern IO_FILE ptr stdout
-extern cdecl int func fputc(char var arg, IO_FILE ptr stream)
+extern void ptr stdout #use void pointer because struct IO_FILE cannot be externally referenced
+extern cdecl int func fputc(char var arg, void ptr stream)
 extern cdecl int func sprintf(char ptr str, char ptr format, *args)
 
 namespace PogScript.IO
 {
-	void func fputs(char ptr str, IO_FILE ptr stream)
+	void func fputs(char ptr str, void ptr stream)
 	{
 		int var i
 
@@ -34,7 +33,7 @@ namespace PogScript.IO
 		fputs(str, stdout)
 	}
 
-	void func fprintf(IO_FILE ptr stream, char ptr fmt, *args)
+	void func fprintf(void ptr stream, char ptr fmt, *args)
 	{
 		fputs(PogScript.String.format(fmt, args), stream)
 	}
