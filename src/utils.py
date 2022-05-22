@@ -88,6 +88,61 @@ def checkfailure():
 	exit(1) if thrown else None
 #
 
+#Dictionary of compatible types
+compatible_types = \
+{
+	"int var": (
+		"int var", 
+		"ushort var", 
+		"ishort var", 
+		"char var",
+
+	),
+
+	"ishort var": (
+		"ishort var"
+	),
+
+	"ilong var": (
+		"ilong var",
+		"uint var",
+		"ushort var",
+		"int var",
+		"char var",
+		"ishort var"
+	),
+
+	"uint var": (
+		"uint var",
+		"ushort var"
+	),
+
+	"ushort var": (
+		"ushort var"
+	),
+
+	"ulong var": (
+		"ulong var",
+		"uint var",
+		"ushort var"
+	),
+
+	"float var": (
+		"float var",
+		"float64 var"
+	),
+
+	"float64 var": (
+		"float64 var"
+	),
+
+	"char var" : (
+		"char var",
+		"int var"
+	)
+}
+#
+
 #Custom Exception used in the ast preprocessor
 class NonConstantNumericalExpressionException(Exception):
 	pass

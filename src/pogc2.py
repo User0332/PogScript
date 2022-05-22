@@ -157,7 +157,7 @@ def main():
 	if warnings: printwarnings()
 	checkfailure()
 
-	import_path.append(DEFAULT_IMPORT_PATH)
+	import_path.append(DEFAULT_IMPORT_PATH) if DEFAULT_IMPORT_PATH not in import_path else None
 
 	lexer = Lexer(code)
 
