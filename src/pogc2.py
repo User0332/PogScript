@@ -1,6 +1,7 @@
 #LOCAL MODULES
 from lexer import Lexer
 from pog_parser3 import Parser3
+from ast_cleaner import ASTCleaner
 from typechecker import TypeChecker
 from ast_preprocessor import SyntaxTreePreproccesor
 from compiler import Compiler
@@ -185,6 +186,8 @@ def main():
 	parser = Parser3(tokens.tokens, code)
 
 	raw_ast = parser.parse()
+
+	raw_ast = ASTCleaner(raw_ast).clean()
 
 	TypeChecker(raw_ast, code).traverse()
 

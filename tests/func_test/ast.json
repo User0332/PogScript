@@ -1,0 +1,89 @@
+{
+ "Expression @Idx[49]": {
+  "Function Definition": {
+   "name": "main",
+   "parameters": [
+    {
+     "vartype": "int var",
+     "name": "argc"
+    },
+    {
+     "vartype": "char ptr",
+     "name": "argv"
+    }
+   ],
+   "body": {
+    "Expression @Idx[23]": {
+     "Variable Definition": {
+      "type": "int var",
+      "name": "foo",
+      "value": {
+       "Numerical Constant": 45
+      },
+      "index": 177
+     }
+    },
+    "Expression @Idx[31]": {
+     "Variable Definition": {
+      "type": "int var",
+      "name": "bar",
+      "value": {
+       "Binary Operation +": [
+        {
+         "Variable Reference": {
+          "name": "foo",
+          "index": 193
+         }
+        },
+        {
+         "Numerical Constant": 86
+        }
+       ]
+      },
+      "index": 199
+     }
+    },
+    "Expression @Idx[47]": {
+     "Variable Definition": {
+      "type": "int var",
+      "name": "baz",
+      "value": {
+       "Binary Operation *": [
+        {
+         "Binary Operation +": [
+          {
+           "Variable Reference": {
+            "name": "foo",
+            "index": 216
+           }
+          },
+          {
+           "Variable Reference": {
+            "name": "bar",
+            "index": 220
+           }
+          }
+         ]
+        },
+        {
+         "Binary Operation -": [
+          {
+           "Numerical Constant": 86
+          },
+          {
+           "Variable Reference": {
+            "name": "foo",
+            "index": 229
+           }
+          }
+         ]
+        }
+       ]
+      },
+      "index": 233
+     }
+    }
+   }
+  }
+ }
+}

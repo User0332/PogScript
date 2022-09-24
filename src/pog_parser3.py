@@ -132,7 +132,6 @@ class Parser3:
 
 			expr = "{}" if expr == "None" else expr
 
-			print(expr)
 			ast[f"Expression @Idx[{self.idx}]"] = loads(expr)
 
 			if self.current.type == "EOF":
@@ -176,6 +175,10 @@ class Parser3:
 		self.advance()
 
 		return body
+
+	# skip newlines
+	def skip_newlines(self):
+		while self.current.type == "NEWLINE": self.advance()
 
 	# Power (**) operator
 	def power(self):
@@ -257,6 +260,7 @@ class Parser3:
 
 		code = get_code(self.code, self.current.idx)
 		
+		
 		throw("POGCC 018: Expected int, float, identifier, '+', '-', or '('", code)
 		self.advance()
 		return UnimplementedNode()
@@ -273,8 +277,7 @@ class Parser3:
 			self.advance()
 			return UnimplementedNode()
 
-		while self.current.type == "NEWLINE":
-			self.advance()
+		self.skip_newlines()
 
 		if self.current.value == "{":
 			self.advance()
@@ -290,14 +293,12 @@ class Parser3:
 				self.advance()
 				return UnimplementedNode()
 
-		while self.current.type == "NEWLINE":
-			self.advance()
+		self.skip_newlines()
 			
 		if self.current.value == "else":
 			self.advance()
 
-			while self.current.type == "NEWLINE":
-				self.advance()
+			self.skip_newlines()
 
 			if self.current.value == "{":
 				self.advance()
@@ -379,6 +380,17 @@ class Parser3:
 
 			self.advance()
 
+		self.advance()
+
+		self.skip_newlines()
+
+		if self.current.value != '{':
+			code = get_code(self.code, self.current.idx)
+			throw("POGCC 018: Expected opening curly brace", code)
+
+			self.advance()
+			return UnimplementedNode()
+		
 		self.advance()
 
 		body: dict = self.get_body()

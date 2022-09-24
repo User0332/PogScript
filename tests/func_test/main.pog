@@ -3,5 +3,7 @@
 # and compiler don't currently support pointer stacking
 int func main(int var argc, char ptr argv)
 {
-	int var x = 45
+	int var foo = 45
+	int var bar = foo+86
+	int var baz = (foo+bar)*(86-foo)
 }
