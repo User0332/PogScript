@@ -62,7 +62,7 @@ class FunctionCompiler:
 				name = node["name"]
 				index  = node["index"]
 
-				memaddr =  self.globals.get(name, index)["address"]
+				memaddr =  self.locals.get(name, index)["address"]
 				self.instr(f"mov eax, [{memaddr}]")
 
 	#The two methods below allocate memory for the
@@ -134,12 +134,13 @@ class FunctionCompiler:
 
 #Compiler
 class Compiler:
-	def __init__(self, ast: dict, code: str):
+	def __init__(self, ast: dict, code: str, module_name: str):
 		self.ast = ast
-		self.asm = "section .text\n\tglobal _start\n\n_start:"
+		self.asm = f"section .text\n\tglobal _{module_name}_init.1\n\n_{module_name}_init.1:"
 		self.scope = "global"
 		self.globals = SymbolTable(code)
 		self.source = code
+		self.module_name = module_name
 
 	def instr(self, instruction: str):
 		self.asm+="\n\t"+instruction
@@ -208,8 +209,8 @@ class Compiler:
 		assert dtype == "int var"
 
 		if self.scope == "global":
-			self.toplevelinstr(f"{name} resb 4")
-			self.globals.declare(name, dtype, 4, name)
+			self.toplevelinstr(f"{self.module_name}.{name} resb 4")
+			self.globals.declare(name, dtype, 4, f"{self.module_name}.{name}")
 
 	def define_variable(self, node: dict):
 		name = node["name"]
@@ -220,8 +221,8 @@ class Compiler:
 		assert dtype == "int var"
 
 		if self.scope == "global":
-			self.toplevelinstr(f"{name} resb 4")
-			self.globals.declare(name, dtype, 4, name)
+			self.toplevelinstr(f"{self.module_name}.{name} resb 4")
+			self.globals.declare(name, dtype, 4, f"{self.module_name}.{name}")
 			memaddr = self.globals.assign(name, value, index)
 			self.generate_expression(value)
 			self.instr(f"mov [{memaddr}], eax")
@@ -244,12 +245,9 @@ class Compiler:
 		
 		top = top if top is not None else self.ast
 
-		
-
 		for key, node in top.items():
 			if key.startswith("Expression"):
-				self.traverse(node)
-				
+				self.traverse(node)				
 			elif key.startswith("Variable Declaration"):
 				self.declare_variable(node)
 			elif key.startswith("Variable Definition"):
@@ -257,7 +255,7 @@ class Compiler:
 			elif key.startswith("Variable Assignment"):
 				self.assign_variable(node)
 
-		if top is self.ast: #add the number of bytes needed to allocate
+		if top is self.ast: # add bss section
 			self.asm=f"section .bss\n"+self.asm
 
 		return self.asm

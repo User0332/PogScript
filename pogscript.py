@@ -1,4 +1,5 @@
 from json import dump
+from re import S
 
 
 from sys import argv, exit
@@ -76,6 +77,27 @@ def build():
 	chdir("..")
 	rmtree(f"{exe_dir}/src")
 
+def rename_mod(modname: str, newname: str):
+	print("WARNING: this will replace any file named with the new name")
+	input("Continue (CTRL-C => NO, Enter => YES)?")
+	with open(f"{modname}.asm", 'r') as f:
+		code = f.read().splitlines()
+
+	try:
+		globaldecl = code.index(f"\tglobal _{modname}_init.1")
+		moddecl = code.index(f"_{modname}_init.1:")
+	except ValueError:
+		print("Module not named correctly. Try recompiling.")
+		exit(1)
+
+	code[globaldecl] = f"\tglobal _{newname}_init.1"
+	code[moddecl] = f"_{newname}_init.1:"
+
+	with open(f"{newname}.asm", 'w') as f:
+		f.write(
+			'\n'.join(code)
+		)
+
 
 if len(argv) < 2:
 	print("No option specified.")
@@ -90,3 +112,10 @@ elif argv[1] == "compile":
 		except OSError: print("Please add pogc2 to your PATH.")
 elif argv[1] == "build":
 	build()
+elif argv[1] == "rename":
+	if len(argv) < 4:
+		print("Not enough arguments.")
+		exit(1)
+
+	rename_mod(argv[2], argv[3])
+

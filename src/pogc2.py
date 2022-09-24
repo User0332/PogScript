@@ -210,7 +210,7 @@ def main():
 		with open(out, "w") as f:
 			f.write(ast)
 
-	compiler = Compiler(raw_ast, code)
+	compiler = Compiler(raw_ast, code, out.split('.')[0])
 	asm = compiler.traverse()
 
 	throwerrors()

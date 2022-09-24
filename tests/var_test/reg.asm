@@ -1,19 +1,20 @@
 section .bss
-	__NOACCESS.mainmem.1 resb 12
-
+	reg.baz resb 4
+	reg.bar resb 4
+	reg.foo resb 4
 section .text
-	global _start
+	global _reg_init.1
 
-_start:
+_reg_init.1:
 	mov eax, 342
 	mov ebx, eax
 	mov eax, 4
 	imul ebx, eax
 	mov eax, ebx
-	mov [__NOACCESS.mainmem.1+0], eax
+	mov [reg.foo], eax
 	mov eax, 84
 	mov ebx, eax
-	mov eax, [__NOACCESS.mainmem.1+0]
+	mov eax, [reg.foo]
 	add ebx, eax
 	mov eax, ebx
 	mov ebx, eax
@@ -24,14 +25,14 @@ _start:
 	mov eax, ebx
 	sub ebx, eax
 	mov eax, ebx
-	mov [__NOACCESS.mainmem.1+4], eax
-	mov eax, [__NOACCESS.mainmem.1+0]
+	mov [reg.bar], eax
+	mov eax, [reg.foo]
 	mov ebx, eax
-	mov eax, [__NOACCESS.mainmem.1+4]
+	mov eax, [reg.bar]
 	add ebx, eax
 	mov eax, ebx
 	mov ebx, eax
 	mov eax, 2
 	imul ebx, eax
 	mov eax, ebx
-	mov [__NOACCESS.mainmem.1+8], eax
+	mov [reg.baz], eax

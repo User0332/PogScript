@@ -88,13 +88,14 @@ class UnimplementedNode:
 		return '{ "Unimplemented Node" : null }'
 
 class FunctionDefinitionNode:
-	def __init__(self, name: str, args: list[str], body: dict):
+	def __init__(self, name: str, params: list[dict[str, str]], body: dict):
 		self.name = name
-		self.args = args
-		self.body = body
+		self.params = params
+		self.formatted_params = '['+', '.join(dumps(x) for x in params)+']'
+		self.body = dumps(body)
 	
 	def __repr__(self):
-		return f'{{"Function Definition" : {{"name" : "{self.name}", "arguments" : {self.args}, "body" : {self.body}  }} }}'
+		return f'{{"Function Definition" : {{"name" : "{self.name}", "parameters" : {self.formatted_params}, "body" : {self.body}  }} }}'
 
 class FunctionCallNode:
 	def __init__(self, name: str, args: list[str], idx: int):
@@ -130,7 +131,8 @@ class Parser3:
 				throw(f"POGCC 030: Missing end-of-statement token <newline>", code)
 
 			expr = "{}" if expr == "None" else expr
-	
+
+			print(expr)
 			ast[f"Expression @Idx[{self.idx}]"] = loads(expr)
 
 			if self.current.type == "EOF":
@@ -268,6 +270,9 @@ class Parser3:
 
 			throw("POGCC 018: Expected expression", code)
 
+			self.advance()
+			return UnimplementedNode()
+
 		while self.current.type == "NEWLINE":
 			self.advance()
 
@@ -281,6 +286,9 @@ class Parser3:
 				code = get_code(self.code, self.current.idx)
 
 				throw("POGCC 018: Expected expression", code)
+
+				self.advance()
+				return UnimplementedNode()
 
 		while self.current.type == "NEWLINE":
 			self.advance()
@@ -306,6 +314,80 @@ class Parser3:
 		
 		return ConditionalStatementNode(condition, if_body, else_body)
 			
+	def func_expr(self, ret_type: str, name: str):
+		if self.current.value != '(':
+			code = get_code(self.code, self.current.idx),
+			throw("POGCC 018: Expected opening parenthesis", code)
+
+			self.advance()
+			return UnimplementedNode()
+
+		self.advance()
+
+		current_vartype = ""
+		parameters = []
+
+		while 1:
+			if self.current.type not in ("INT", "FLOAT", "CHAR"):
+				print(self.current)
+				code = get_code(self.code, self.current.idx)
+				throw("POGCC 018: Expected datatype", code)
+
+				self.advance()
+				return UnimplementedNode()
+
+			current_vartype+=self.current.value
+			self.advance()
+
+			if self.current.type not in ("VAR", "CONST", "PTR", "FUNC"):
+				code = get_code(self.code, self.current.idx)
+				throw("POGCC 018: Expected symbol type", code)
+
+				self.advance()
+				return UnimplementedNode()
+
+			current_vartype+=' '+self.current.value
+			self.advance()
+
+			if self.current.type != "IDENTIFIER":
+				code = get_code(self.code, self.current.idx)
+				throw("POGCC 018: Expected identifier name")
+
+				self.advance()
+				return UnimplementedNode()
+
+			parameters.append(
+				{
+					"vartype": current_vartype, 
+					"name": self.current.value
+				}
+			)
+
+			current_vartype = ""
+
+			self.advance()
+
+			if self.current.value not in (',', ')'):
+				code = get_code(self.code, self.current.idx)
+				throw("POGCC 018: Expected ',' or ')'")
+
+				self.advance()
+
+				return UnimplementedNode()
+
+			if self.current.value == ')': break
+
+			self.advance()
+
+		self.advance()
+
+		body: dict = self.get_body()
+
+		return FunctionDefinitionNode(
+			name,
+			parameters,
+			body
+		)
 
 	def comp_expr(self):
 		if self.current.value == "not":
@@ -323,7 +405,7 @@ class Parser3:
 
 	def expr(self):
 		if self.current.type in ("INT", "FLOAT", "CHAR"):
-			vartype = self.current.value
+			vartype: str = self.current.value
 			self.advance()
 			if self.current.type in ("VAR", "PTR", "CONST", "FUNC"):
 				vartype+=' '+self.current.value
@@ -337,9 +419,12 @@ class Parser3:
 					
 					self.advance()
 					return UnimplementedNode()
-			
+
 				name = self.current.value
 				self.advance()
+
+				if vartype.endswith("func"):
+					return self.func_expr(vartype, name)
 
 				if self.current.type == "NEWLINE":
 					return VariableDeclarationNode(f"{vartype}", name)

@@ -1,0 +1,39 @@
+# note: try to implement semantic highlighting to highlight
+# libc4pog.stdio_h and 
+# (printf based off of usage in program, not from definition)
+from libc4pog.stdio_h import printf, puts
+
+int var x = 53
+
+int func main(int var argc, char ptr ptr argv)
+{
+	printf("Hello World! x = %i\n", x)
+	
+	return 0
+}
+
+
+namespace MyProgram
+{
+	class MyClass
+	{
+		untypechecked int func hello()
+		{
+			int var x = "Hello World!"
+			puts(x)
+		}
+	}
+
+}
+
+untypechecked
+{
+	x = MyProgram.MyClass()
+	x.hello() #untypechecked function can only be called from untypechecked block
+}
+
+prebound greet(char ptr name) = printf bind ("Hello, %s!", name)
+
+greet(
+	print
+)

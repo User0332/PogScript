@@ -1,0 +1,7 @@
+
+# argv can't be marked as char ptr ptr because the parser
+# and compiler don't currently support pointer stacking
+int func main(int var argc, char ptr argv)
+{
+	int var x = 45
+}

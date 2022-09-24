@@ -1,0 +1,11 @@
+{
+	"$schema": "C:/Users/carlf/programs/PogScript/pogfig_schema/pogfig_schema.json",
+	"imports.paths": [
+		"%FILE%/imports",
+		"%COMPILER%/imports"
+	],
+	"imports.names": {
+		"projlib": ".projlib"
+	},
+	"compiler.optimizations": 0
+}
