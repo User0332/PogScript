@@ -1,5 +1,7 @@
 # PogScript
 
+NOTE: THIS REPOSITORY IS NOW ARCHIVED AND THE PROJECT HAS BEEN DROPPED. A NEW PROJECT HAS BRANCHED OFF OF POGSCRIPT AT [https://github.com/User0332/UntypedScript](https://github.com/User0332/UntypedScript)
+
 A new, C-style language which aims to provide dynamic typing, object-oriented programming, and other high-level language features while also being compiled to x86 assembly. The code in this repository is for the base implementation, **pogc2**, which is a compiler for the language written in Python.
 
 **Feel free to make contributions or suggestions -- just submit a pull request!**
